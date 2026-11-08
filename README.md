@@ -55,6 +55,10 @@ streamlit run app.py
 python -m src.cli A
 ```
 
+## Team work split
+
+Group 11 ownership is in [`TEAM.md`](TEAM.md) and [`docs/WORK_SPLIT.md`](docs/WORK_SPLIT.md).
+
 ## Project layout
 
 ```
