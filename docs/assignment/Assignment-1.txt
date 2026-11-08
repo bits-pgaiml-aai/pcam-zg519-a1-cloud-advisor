@@ -1,0 +1,50 @@
+Group 11 
+S. BHAGAT SINGH
+KARTHIK K
+SNEHALATHA M
+VENKATA SRINIVASA RAO TUNUGUNTLA
+----------------------------------------
+
+Assignment 1-set-3-(Group-9 Group-10 Group-11 Group-12)
+
+Opened: Tuesday, 3 November 2026, 7:00 PM
+Due: Wednesday, 18 November 2026, 11:59 PM
+
+Instructions
+	Implement five separate Python agents: Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, and Learning Agent.
+	Implement one LLM-based agent using a local Ollama model (for example, Qwen3) with tool calling.
+	All six agents must receive the same selected scenario data so their decisions can be compared fairly.
+	Include at least three test scenarios: normal, critical/failure, and edge or ambiguous case.
+	Build a Streamlit UI to select a scenario and display each agent's decision, reasoning, and comparison.
+	The LLM must call at least two relevant tools and ground its recommendation in returned evidence.
+	The Learning Agent must use or update experience data, such as success/failure counts, and explain how it affects its decision.
+	Submit source code, requirements.txt, README, screenshots, test results.
+Submission checklist
+	Python source for all five classical agents and the LLM agent.
+	requirements.txt, README, Streamlit UI, and setup/run instructions.
+	Three scenario test results and screenshots.
+	Comparison table and explanation of why decisions differ.
+
+Cloud Resource and Cost Optimization Advisor
+
+Problem statement: Build an advisor that analyzes simulated cloud workload metrics and recommends resource configurations balancing response time, availability, and cost. Explain trade-offs without changing cloud resources.
+
+Required scenarios:
+A: CPU utilization is consistently high and response time exceeds target.
+B: CPU and memory utilization are low, but the instance is expensive.
+C: Workload varies sharply during peak and off-peak hours.
+
+Suggested LLM tools: get_resource_metrics(), get_cost_estimate(), get_service_level_targets(), get_scaling_policy()
+
+Expected output: Current-state summary, candidate configurations, estimated cost/performance trade-offs, recommendation, and monitoring plan.
+
+ 
+
+Criterion	|	Assessment standard		|	Marks
+Five classical agents	|	Separate, correct implementations using each intended decision mechanism.	|	5
+LLM agent and tool calling	|	Local Ollama model through LangChain; at least two relevant tools called and evidence used.	|	4
+Shared scenarios and testing	|	At least three test scenarios; all six agents receive the same input; edge case handled.	|	3
+Streamlit UI and comparison	|	Usable UI; decisions and reasons displayed; clear comparison across agents.	|	3
+Learning and evaluation	|	Learning agent uses/updates outcome history; evidence is checked; limitations acknowledged.	|	3
+Documentation and demonstration	|	README, setup instructions, screenshots, organized code, and clear explanation.	|	2
+
