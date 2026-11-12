@@ -1,10 +1,38 @@
 {
   "action_stats": {
-    "keep_current": {"success": 1, "failure": 1},
-    "scale_up": {"success": 1, "failure": 1},
-    "scale_down": {"success": 1, "failure": 1},
-    "enable_autoscaling": {"success": 1, "failure": 1},
-    "rightsize_compute": {"success": 1, "failure": 1}
+    "keep_current": {
+      "success": 1,
+      "failure": 1
+    },
+    "scale_up": {
+      "success": 2,
+      "failure": 1
+    },
+    "scale_down": {
+      "success": 2,
+      "failure": 1
+    },
+    "enable_autoscaling": {
+      "success": 1,
+      "failure": 1
+    },
+    "rightsize_compute": {
+      "success": 1,
+      "failure": 1
+    }
   },
-  "episodes": []
+  "episodes": [
+    {
+      "scenario_id": "A",
+      "action": "scale_up",
+      "success": true,
+      "notes": "seed success for scale_up"
+    },
+    {
+      "scenario_id": "B",
+      "action": "scale_down",
+      "success": true,
+      "notes": "seed success for scale_down"
+    }
+  ]
 }

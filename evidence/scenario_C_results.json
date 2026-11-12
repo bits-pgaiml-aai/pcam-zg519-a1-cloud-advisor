@@ -1,0 +1,354 @@
+{
+  "scenario": {
+    "id": "C",
+    "name": "Sharp peak / off-peak variation",
+    "kind": "normal",
+    "description": "Workload varies sharply during peak and off-peak hours.",
+    "metrics": {
+      "instance_type": "m5.xlarge",
+      "cpu_util_pct": 55.0,
+      "memory_util_pct": 48.0,
+      "p95_response_ms": 280.0,
+      "error_rate_pct": 0.6,
+      "requests_per_min": 260.0,
+      "peak_cpu_util_pct": 91.0,
+      "offpeak_cpu_util_pct": 12.0,
+      "hourly_cost_usd": 0.192,
+      "autoscaling_enabled": false,
+      "availability_pct": 99.6
+    },
+    "sla": {
+      "p95_response_ms": 300,
+      "availability_pct": 99.5,
+      "max_hourly_cost_usd": 0.25
+    },
+    "candidates": [
+      {
+        "instance_type": "t3.medium",
+        "vcpus": 2,
+        "memory_gb": 4,
+        "hourly_usd": 0.0416,
+        "monthly_usd": 29.95,
+        "delta_vs_current_hourly": -0.1504,
+        "is_current": false
+      },
+      {
+        "instance_type": "t3.large",
+        "vcpus": 2,
+        "memory_gb": 8,
+        "hourly_usd": 0.0832,
+        "monthly_usd": 59.9,
+        "delta_vs_current_hourly": -0.1088,
+        "is_current": false
+      },
+      {
+        "instance_type": "m5.large",
+        "vcpus": 2,
+        "memory_gb": 8,
+        "hourly_usd": 0.096,
+        "monthly_usd": 69.12,
+        "delta_vs_current_hourly": -0.096,
+        "is_current": false
+      },
+      {
+        "instance_type": "m5.xlarge",
+        "vcpus": 4,
+        "memory_gb": 16,
+        "hourly_usd": 0.192,
+        "monthly_usd": 138.24,
+        "delta_vs_current_hourly": 0.0,
+        "is_current": true
+      },
+      {
+        "instance_type": "m5.2xlarge",
+        "vcpus": 8,
+        "memory_gb": 32,
+        "hourly_usd": 0.384,
+        "monthly_usd": 276.48,
+        "delta_vs_current_hourly": 0.192,
+        "is_current": false
+      },
+      {
+        "instance_type": "c5.xlarge",
+        "vcpus": 4,
+        "memory_gb": 8,
+        "hourly_usd": 0.17,
+        "monthly_usd": 122.4,
+        "delta_vs_current_hourly": -0.022,
+        "is_current": false
+      }
+    ]
+  },
+  "results": [
+    {
+      "agent": "Simple Reflex",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Simple reflex: IF peak-offpeak gap>=50 THEN enable_autoscaling. Observed cpu=55.0%, p95=280.0ms, cost=$0.192/hr, gap=79.0.",
+      "candidates": [
+        "enable_autoscaling"
+      ],
+      "current_state_summary": "Sharp peak / off-peak variation: instance=m5.xlarge, cpu=55.0%, mem=48.0%, p95=280.0ms, cost=$0.192/hr, autoscaling=False (no hard SLA breach)",
+      "trade_offs": "Fast and deterministic, but ignores history, multi-objective scoring, and candidate instance catalog.",
+      "monitoring_plan": "Re-evaluate the same threshold rules next window.",
+      "mechanism": "Simple Reflex"
+    },
+    {
+      "agent": "Model-Based Reflex",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Model-based reflex used internal state: modelled workload swing peak-offpeak=79.0.",
+      "candidates": [
+        "enable_autoscaling"
+      ],
+      "current_state_summary": "Sharp peak / off-peak variation: instance=m5.xlarge, cpu=55.0%, mem=48.0%, p95=280.0ms, cost=$0.192/hr, autoscaling=False (no hard SLA breach)",
+      "trade_offs": "Uses short memory of unseen trend, but still no explicit goal search or utility ranking.",
+      "monitoring_plan": "Track breach/low-util streaks across evaluation windows.",
+      "mechanism": "Model-Based Reflex",
+      "internal_state": {
+        "recent_cpu": [
+          55.0
+        ],
+        "recent_p95": [
+          280.0
+        ],
+        "recent_cost": [
+          0.192
+        ],
+        "breach_streak": 0,
+        "low_util_streak": 0
+      }
+    },
+    {
+      "agent": "Goal-Based",
+      "recommendation": "scale_up",
+      "reasoning": "Looked ahead over 5 actions; 4 pass the goal test. Took first passing plan (scale_up). Checks: scale_up:pass, enable_autoscaling:pass, rightsize_compute:pass, scale_down:fail, keep_current:pass.",
+      "candidates": [
+        "scale_up",
+        "enable_autoscaling",
+        "rightsize_compute",
+        "keep_current"
+      ],
+      "current_state_summary": "Sharp peak / off-peak variation: instance=m5.xlarge, cpu=55.0%, mem=48.0%, p95=280.0ms, cost=$0.192/hr, autoscaling=False (no hard SLA breach)",
+      "trade_offs": "All passing plans treated as equally good (no utility ranking).",
+      "monitoring_plan": "Verify predicted p95/cost after the change window.",
+      "mechanism": "Goal-Based",
+      "predicted_outcome": {
+        "p95_response_ms": 154.0,
+        "availability_pct": 99.89999999999999,
+        "hourly_cost_usd": 0.3456,
+        "autoscaling_enabled": false
+      },
+      "goal_checks": [
+        "scale_up:pass",
+        "enable_autoscaling:pass",
+        "rightsize_compute:pass",
+        "scale_down:fail",
+        "keep_current:pass"
+      ]
+    },
+    {
+      "agent": "Utility-Based",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Maximized expected utility among feasible plans. Ranking: [enable_autoscaling=-11.32, rightsize_compute=-17.28, keep_current=-19.20, scale_up=-34.56].",
+      "candidates": [
+        "enable_autoscaling",
+        "rightsize_compute",
+        "keep_current",
+        "scale_up"
+      ],
+      "current_state_summary": "Sharp peak / off-peak variation: instance=m5.xlarge, cpu=55.0%, mem=48.0%, p95=280.0ms, cost=$0.192/hr, autoscaling=False (no hard SLA breach)",
+      "trade_offs": "Balances latency penalty, availability gap, and hourly cost; uses advertised/static beliefs only.",
+      "monitoring_plan": "Compare realized utility vs predicted after one billing day.",
+      "mechanism": "Utility-Based",
+      "utility_ranking": [
+        [
+          "enable_autoscaling",
+          -11.32
+        ],
+        [
+          "rightsize_compute",
+          -17.28
+        ],
+        [
+          "keep_current",
+          -19.2
+        ],
+        [
+          "scale_up",
+          -34.56
+        ]
+      ]
+    },
+    {
+      "agent": "Learning",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Maximized expected utility among feasible plans. Ranking: [enable_autoscaling=-11.32, rightsize_compute=-17.28, keep_current=-19.20, scale_up=-31.23]. Experience-adjusted success rates: enable_autoscaling=0.50, rightsize_compute=0.50, keep_current=0.50, scale_up=0.67.",
+      "candidates": [
+        "enable_autoscaling",
+        "rightsize_compute",
+        "keep_current",
+        "scale_up"
+      ],
+      "current_state_summary": "Sharp peak / off-peak variation: instance=m5.xlarge, cpu=55.0%, mem=48.0%, p95=280.0ms, cost=$0.192/hr, autoscaling=False (no hard SLA breach)",
+      "trade_offs": "Improves with outcomes, but needs enough episodes and occasional exploration.",
+      "monitoring_plan": "Compare realized utility vs predicted after one billing day.",
+      "mechanism": "Learning",
+      "utility_ranking": [
+        [
+          "enable_autoscaling",
+          -11.32
+        ],
+        [
+          "rightsize_compute",
+          -17.28
+        ],
+        [
+          "keep_current",
+          -19.2
+        ],
+        [
+          "scale_up",
+          -31.22666666666667
+        ]
+      ],
+      "learning_stats": {
+        "keep_current": {
+          "success_rate": 0.5,
+          "success": 1,
+          "failure": 1
+        },
+        "scale_up": {
+          "success_rate": 0.667,
+          "success": 2,
+          "failure": 1
+        },
+        "scale_down": {
+          "success_rate": 0.667,
+          "success": 2,
+          "failure": 1
+        },
+        "enable_autoscaling": {
+          "success_rate": 0.5,
+          "success": 1,
+          "failure": 1
+        },
+        "rightsize_compute": {
+          "success_rate": 0.5,
+          "success": 1,
+          "failure": 1
+        }
+      },
+      "limitations": "Early counts are priors; sparse feedback can bias preferences. Exploration may temporarily pick a suboptimal plan."
+    },
+    {
+      "agent": "LLM (tool-evidence fallback)",
+      "recommendation": "keep_current",
+      "reasoning": "Ollama/LangChain unavailable; used deterministic tool evidence fallback. Errors: langchain=No module named 'langchain_core'; ollama=No module named 'ollama'. Recommendation=keep_current from tools ['get_resource_metrics', 'get_cost_estimate'].",
+      "tool_trace": [
+        {
+          "tool": "get_resource_metrics",
+          "args": {
+            "scenario_id": "C"
+          },
+          "result": {
+            "scenario_id": "C",
+            "scenario_name": "Sharp peak / off-peak variation",
+            "kind": "normal",
+            "description": "Workload varies sharply during peak and off-peak hours.",
+            "metrics": {
+              "instance_type": "m5.xlarge",
+              "cpu_util_pct": 55.0,
+              "memory_util_pct": 48.0,
+              "p95_response_ms": 280.0,
+              "error_rate_pct": 0.6,
+              "requests_per_min": 260.0,
+              "peak_cpu_util_pct": 91.0,
+              "offpeak_cpu_util_pct": 12.0,
+              "hourly_cost_usd": 0.192,
+              "autoscaling_enabled": false,
+              "availability_pct": 99.6
+            }
+          }
+        },
+        {
+          "tool": "get_cost_estimate",
+          "args": {
+            "instance_type": "m5.xlarge"
+          },
+          "result": {
+            "instance_type": "m5.xlarge",
+            "hourly_usd": 0.192,
+            "monthly_usd": 138.24,
+            "hours_per_month": 720,
+            "spec": {
+              "vcpus": 4,
+              "memory_gb": 16,
+              "hourly_usd": 0.192,
+              "burst": false
+            },
+            "cheaper_alternatives": [
+              {
+                "instance_type": "t3.medium",
+                "hourly_usd": 0.0416,
+                "monthly_usd": 29.95
+              },
+              {
+                "instance_type": "t3.large",
+                "hourly_usd": 0.0832,
+                "monthly_usd": 59.9
+              },
+              {
+                "instance_type": "m5.large",
+                "hourly_usd": 0.096,
+                "monthly_usd": 69.12
+              }
+            ]
+          }
+        }
+      ],
+      "candidates": [
+        "keep_current"
+      ],
+      "current_state_summary": "Sharp peak / off-peak variation: instance=m5.xlarge, cpu=55.0%, mem=48.0%, p95=280.0ms, cost=$0.192/hr, autoscaling=False (no hard SLA breach)",
+      "trade_offs": "Grounded in tool evidence; simulation only; model may mis-rank soft trade-offs.",
+      "monitoring_plan": "Track p95 latency, CPU, and hourly cost for 24h after any change.",
+      "model": "qwen2.5:1.5b-instruct",
+      "tools_called": [
+        "get_resource_metrics",
+        "get_cost_estimate"
+      ]
+    }
+  ],
+  "comparison": [
+    {
+      "agent": "Simple Reflex",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Simple reflex: IF peak-offpeak gap>=50 THEN enable_autoscaling. Observed cpu=55.0%, p95=280.0ms, cost=$0.192/hr, gap=79.0."
+    },
+    {
+      "agent": "Model-Based Reflex",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Model-based reflex used internal state: modelled workload swing peak-offpeak=79.0."
+    },
+    {
+      "agent": "Goal-Based",
+      "recommendation": "scale_up",
+      "reasoning": "Looked ahead over 5 actions; 4 pass the goal test. Took first passing plan (scale_up). Checks: scale_up:pass, enable_autoscaling:pass, rightsize_compute:pass, scale_down:fail, keep_current:pass."
+    },
+    {
+      "agent": "Utility-Based",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Maximized expected utility among feasible plans. Ranking: [enable_autoscaling=-11.32, rightsize_compute=-17.28, keep_current=-19.20, scale_up=-34.56]."
+    },
+    {
+      "agent": "Learning",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Maximized expected utility among feasible plans. Ranking: [enable_autoscaling=-11.32, rightsize_compute=-17.28, keep_current=-19.20, scale_up=-31.23]. Experience-adjusted success rates: enable_autoscaling=0.50, rightsize_compute=0.50, keep_current=0.50, scale_up=0.67."
+    },
+    {
+      "agent": "LLM (tool-evidence fallback)",
+      "recommendation": "keep_current",
+      "reasoning": "Ollama/LangChain unavailable; used deterministic tool evidence fallback. Errors: langchain=No module named 'langchain_core'; ollama=No module named 'ollama'. Recommendation=keep_current from tools ['get_resource_metrics', 'get_cost_estimate']."
+    }
+  ],
+  "why_decisions_differ": "Agents differ because each uses a different decision mechanism (rules vs state vs goal test vs utility vs learned rates vs LLM+tools). enable_autoscaling: Simple Reflex, Model-Based Reflex, Utility-Based, Learning | scale_up: Goal-Based | keep_current: LLM (tool-evidence fallback)"
+}

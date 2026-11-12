@@ -31,7 +31,9 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "id": "A",
         "name": "High CPU / slow responses",
         "kind": "critical",
-        "description": "CPU utilization is consistently high and response time exceeds target.",
+        "description": (
+            "CPU utilization is consistently high and response time exceeds target."
+        ),
         "metrics": {
             "instance_type": "m5.large",
             "cpu_util_pct": 92.0,
@@ -50,7 +52,9 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "id": "B",
         "name": "Over-provisioned expensive instance",
         "kind": "normal",
-        "description": "CPU and memory utilization are low, but the instance is expensive.",
+        "description": (
+            "CPU and memory utilization are low, but the instance is expensive."
+        ),
         "metrics": {
             "instance_type": "m5.2xlarge",
             "cpu_util_pct": 18.0,
@@ -88,7 +92,10 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "id": "D",
         "name": "Ambiguous mixed signals",
         "kind": "edge",
-        "description": "Latency is slightly high, cost is near budget, and CPU is moderate with intermittent spikes.",
+        "description": (
+            "Latency is slightly high, cost is near budget, and CPU is moderate "
+            "with intermittent spikes."
+        ),
         "metrics": {
             "instance_type": "c5.xlarge",
             "cpu_util_pct": 64.0,
@@ -121,15 +128,36 @@ def candidate_configs(current_instance: str) -> list[dict[str, Any]]:
                 "memory_gb": spec["memory_gb"],
                 "hourly_usd": spec["hourly_usd"],
                 "monthly_usd": estimate_monthly_cost(spec["hourly_usd"]),
-                "delta_vs_current_hourly": round(spec["hourly_usd"] - current["hourly_usd"], 4),
+                "delta_vs_current_hourly": round(
+                    spec["hourly_usd"] - current["hourly_usd"], 4
+                ),
                 "is_current": name == current_instance,
             }
         )
     return configs
 
 
+def summarize_state(percept: dict[str, Any]) -> str:
+    m = percept["metrics"]
+    sla = percept["sla"]
+    breaches = []
+    if m["p95_response_ms"] > sla["p95_response_ms"]:
+        breaches.append("latency>SLA")
+    if m["availability_pct"] < sla["availability_pct"]:
+        breaches.append("availability<SLA")
+    if m["hourly_cost_usd"] > sla["max_hourly_cost_usd"]:
+        breaches.append("cost>budget")
+    breach_txt = ", ".join(breaches) if breaches else "no hard SLA breach"
+    return (
+        f"{percept['scenario_name']}: instance={m['instance_type']}, "
+        f"cpu={m['cpu_util_pct']}%, mem={m['memory_util_pct']}%, "
+        f"p95={m['p95_response_ms']}ms, cost=${m['hourly_cost_usd']}/hr, "
+        f"autoscaling={m['autoscaling_enabled']} ({breach_txt})"
+    )
+
+
 class CloudWorld:
-    def __init__(self):
+    def __init__(self) -> None:
         self.scenarios = deepcopy(SCENARIOS)
 
     def list_scenarios(self) -> list[dict[str, str]]:
@@ -144,9 +172,10 @@ class CloudWorld:
         ]
 
     def get_scenario(self, scenario_id: str) -> dict[str, Any]:
-        if scenario_id not in self.scenarios:
+        key = scenario_id.upper()
+        if key not in self.scenarios:
             raise KeyError(f"Unknown scenario: {scenario_id}")
-        return deepcopy(self.scenarios[scenario_id])
+        return deepcopy(self.scenarios[key])
 
     def perceive(self, scenario_id: str) -> dict[str, Any]:
         scenario = self.get_scenario(scenario_id)

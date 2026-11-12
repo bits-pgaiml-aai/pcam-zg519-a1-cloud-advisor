@@ -7,12 +7,12 @@ from typing import Any
 
 from .utility_based import UtilityBasedAgent
 
-DEFAULT_HISTORY_PATH = (
-    Path(__file__).resolve().parents[2] / "data" / "learning_history.json"
-)
+DEFAULT_HISTORY_PATH = Path(__file__).resolve().parents[2] / "data" / "learning_history.json"
 
 
 class LearningAgent(UtilityBasedAgent):
+    """Utility performance element + critic/learning element over action outcomes."""
+
     name = "Learning"
 
     def __init__(
@@ -46,10 +46,7 @@ class LearningAgent(UtilityBasedAgent):
 
     def _save_history(self) -> None:
         self.history_path.parent.mkdir(parents=True, exist_ok=True)
-        self.history_path.write_text(
-            json.dumps(self.history, indent=2),
-            encoding="utf-8",
-        )
+        self.history_path.write_text(json.dumps(self.history, indent=2), encoding="utf-8")
 
     def success_rate(self, action: str) -> float:
         stats = self.history["action_stats"].get(action, {"success": 1, "failure": 1})
@@ -65,24 +62,19 @@ class LearningAgent(UtilityBasedAgent):
     def decide(self, percept: dict[str, Any]) -> dict[str, Any]:
         decision = super().decide(percept)
         decision["agent"] = self.name
-        feasible = [a for a, u in decision.get("utility_ranking", []) if u != float("-inf")]
+        ranking = decision.get("utility_ranking", [])
+        feasible = [a for a, u in ranking if u != float("-inf")]
+        rates = ", ".join(f"{a}={self.success_rate(a):.2f}" for a in feasible) or "n/a"
+
         if len(feasible) > 1 and self.rng.random() < self.explore:
             alt = self.rng.choice(feasible[1:])
             decision["recommendation"] = alt
             decision["reasoning"] = (
-                f"Exploring alternative feasible action '{alt}' to gather outcome evidence. "
-                f"Prior success rates: "
-                + ", ".join(f"{a}={self.success_rate(a):.2f}" for a in feasible)
+                f"Learning agent exploring alternative '{alt}' to gather outcome evidence. "
+                f"Experience-adjusted success rates: {rates}."
             )
         else:
-            decision["reasoning"] += (
-                " Experience-adjusted rates: "
-                + ", ".join(
-                    f"{a}={self.success_rate(a):.2f}"
-                    for a, _ in decision.get("utility_ranking", [])
-                )
-                + "."
-            )
+            decision["reasoning"] += f" Experience-adjusted success rates: {rates}."
 
         decision["learning_stats"] = {
             action: {
@@ -92,8 +84,11 @@ class LearningAgent(UtilityBasedAgent):
             for action in self.history["action_stats"]
         }
         decision["limitations"] = (
-            "Early counts are priors; sparse feedback can bias action preference. "
+            "Early counts are priors; sparse feedback can bias preferences. "
             "Exploration may temporarily pick a suboptimal plan."
+        )
+        decision["trade_offs"] = (
+            "Improves with outcomes, but needs enough episodes and occasional exploration."
         )
         return decision
 
@@ -104,20 +99,19 @@ class LearningAgent(UtilityBasedAgent):
         success: bool,
         notes: str = "",
     ) -> dict[str, Any]:
-        stats = self.history["action_stats"].setdefault(
-            action, {"success": 1, "failure": 1}
-        )
+        stats = self.history["action_stats"].setdefault(action, {"success": 1, "failure": 1})
         if success:
             stats["success"] += 1
         else:
             stats["failure"] += 1
-        episode = {
-            "scenario_id": scenario_id,
-            "action": action,
-            "success": success,
-            "notes": notes,
-        }
-        self.history["episodes"].append(episode)
+        self.history["episodes"].append(
+            {
+                "scenario_id": scenario_id,
+                "action": action,
+                "success": success,
+                "notes": notes,
+            }
+        )
         self._save_history()
         return {
             "updated_action": action,

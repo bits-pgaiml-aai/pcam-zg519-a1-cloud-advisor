@@ -13,7 +13,7 @@ st.set_page_config(page_title="Cloud Resource Advisor", layout="wide")
 st.title("Cloud Resource and Cost Optimization Advisor")
 st.caption(
     "BITS PGAIML · PCAM ZG519 Agentic AI · Assignment-1 · Group 11 — "
-    "compare five classical agents and one local Ollama LLM agent on shared scenarios."
+    "Venkata implementation: five classical agents + local Ollama LLM agent"
 )
 
 world = CloudWorld()
@@ -23,6 +23,7 @@ labels = {f"{s['id']}: {s['name']} ({s['kind']})": s["id"] for s in scenarios}
 selected_label = st.selectbox("Scenario", list(labels))
 scenario_id = labels[selected_label]
 scenario = world.get_scenario(scenario_id)
+percept = world.perceive(scenario_id)
 
 col1, col2 = st.columns([1, 1])
 with col1:
@@ -31,16 +32,18 @@ with col1:
     st.json(scenario["metrics"])
 with col2:
     st.subheader("SLA targets")
-    st.json(world.perceive(scenario_id)["sla"])
+    st.json(percept["sla"])
+    st.subheader("Candidate configurations")
+    st.dataframe(pd.DataFrame(percept["candidates"]), use_container_width=True)
 
-include_llm = st.checkbox("Include LLM agent (Ollama)", value=True)
+include_llm = st.checkbox("Include LLM agent (Ollama / LangChain)", value=True)
 run_clicked = st.button("Run all agents", type="primary")
 
 if "learning_agent" not in st.session_state:
     st.session_state.learning_agent = LearningAgent()
 
 if run_clicked:
-    with st.spinner("Running agents..."):
+    with st.spinner("Running agents on the same scenario percept..."):
         payload = run_all_agents(
             scenario_id,
             include_llm=include_llm,
@@ -50,24 +53,31 @@ if run_clicked:
 
 if "last_run" in st.session_state:
     payload = st.session_state.last_run
-    st.subheader("Comparison")
-    df = pd.DataFrame(payload["comparison"])
-    st.dataframe(df, use_container_width=True)
+    st.subheader("Comparison across agents")
+    st.dataframe(pd.DataFrame(payload["comparison"]), use_container_width=True)
+    st.info(payload["why_decisions_differ"])
 
     for result in payload["results"]:
-        with st.expander(f"{result['agent']} → {result['recommendation']}", expanded=False):
-            st.markdown(f"**Reasoning:** {result.get('reasoning', '')}")
+        with st.expander(
+            f"{result['agent']} → {result['recommendation']}", expanded=False
+        ):
             st.markdown(f"**Current state:** {result.get('current_state_summary', '')}")
+            st.markdown(f"**Reasoning:** {result.get('reasoning', '')}")
             st.markdown(f"**Trade-offs:** {result.get('trade_offs', '')}")
             st.markdown(f"**Monitoring plan:** {result.get('monitoring_plan', '')}")
+            if result.get("candidates"):
+                st.markdown(f"**Candidates:** {', '.join(map(str, result['candidates']))}")
             if result.get("tool_trace"):
                 st.markdown("**Tool evidence**")
                 st.json(result["tool_trace"])
             if result.get("learning_stats"):
                 st.markdown("**Learning stats**")
                 st.json(result["learning_stats"])
+            if result.get("utility_ranking"):
+                st.markdown("**Utility ranking**")
+                st.json(result["utility_ranking"])
             if result.get("limitations"):
-                st.info(result["limitations"])
+                st.warning(result["limitations"])
 
     st.subheader("Update Learning Agent experience")
     action = st.selectbox(
@@ -90,7 +100,7 @@ if "last_run" in st.session_state:
             success,
             notes,
         )
-        st.success(f"Updated {update}")
+        st.success(update)
 
     st.download_button(
         "Download run JSON",

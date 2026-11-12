@@ -1,10 +1,7 @@
-# Member implementations
+# Optional member archives
 
-Put your full Assignment-1 package under your folder:
+Team model: each person implements independently; best one is submitted.
 
-- `members/bhagat/`
-- `members/karthik/`
-- `members/snehalatha/`
-- `members/venkat/`
+Venkat’s implementation is at the **repository root**, not here.
 
-After the bake-off, the winning implementation is promoted for group submission.
+Other members may use personal branches or their own folders if they prefer.

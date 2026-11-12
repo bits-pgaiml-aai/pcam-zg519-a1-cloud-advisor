@@ -1,0 +1,343 @@
+{
+  "scenario": {
+    "id": "D",
+    "name": "Ambiguous mixed signals",
+    "kind": "edge",
+    "description": "Latency is slightly high, cost is near budget, and CPU is moderate with intermittent spikes.",
+    "metrics": {
+      "instance_type": "c5.xlarge",
+      "cpu_util_pct": 64.0,
+      "memory_util_pct": 71.0,
+      "p95_response_ms": 330.0,
+      "error_rate_pct": 0.9,
+      "requests_per_min": 310.0,
+      "peak_cpu_util_pct": 84.0,
+      "offpeak_cpu_util_pct": 35.0,
+      "hourly_cost_usd": 0.17,
+      "autoscaling_enabled": true,
+      "availability_pct": 99.4
+    },
+    "sla": {
+      "p95_response_ms": 300,
+      "availability_pct": 99.5,
+      "max_hourly_cost_usd": 0.25
+    },
+    "candidates": [
+      {
+        "instance_type": "t3.medium",
+        "vcpus": 2,
+        "memory_gb": 4,
+        "hourly_usd": 0.0416,
+        "monthly_usd": 29.95,
+        "delta_vs_current_hourly": -0.1284,
+        "is_current": false
+      },
+      {
+        "instance_type": "t3.large",
+        "vcpus": 2,
+        "memory_gb": 8,
+        "hourly_usd": 0.0832,
+        "monthly_usd": 59.9,
+        "delta_vs_current_hourly": -0.0868,
+        "is_current": false
+      },
+      {
+        "instance_type": "m5.large",
+        "vcpus": 2,
+        "memory_gb": 8,
+        "hourly_usd": 0.096,
+        "monthly_usd": 69.12,
+        "delta_vs_current_hourly": -0.074,
+        "is_current": false
+      },
+      {
+        "instance_type": "m5.xlarge",
+        "vcpus": 4,
+        "memory_gb": 16,
+        "hourly_usd": 0.192,
+        "monthly_usd": 138.24,
+        "delta_vs_current_hourly": 0.022,
+        "is_current": false
+      },
+      {
+        "instance_type": "m5.2xlarge",
+        "vcpus": 8,
+        "memory_gb": 32,
+        "hourly_usd": 0.384,
+        "monthly_usd": 276.48,
+        "delta_vs_current_hourly": 0.214,
+        "is_current": false
+      },
+      {
+        "instance_type": "c5.xlarge",
+        "vcpus": 4,
+        "memory_gb": 8,
+        "hourly_usd": 0.17,
+        "monthly_usd": 122.4,
+        "delta_vs_current_hourly": 0.0,
+        "is_current": true
+      }
+    ]
+  },
+  "results": [
+    {
+      "agent": "Simple Reflex",
+      "recommendation": "scale_up",
+      "reasoning": "Simple reflex: IF cpu>=85 OR p95>300 THEN scale_up. Observed cpu=64.0%, p95=330.0ms, cost=$0.17/hr, gap=49.0.",
+      "candidates": [
+        "scale_up"
+      ],
+      "current_state_summary": "Ambiguous mixed signals: instance=c5.xlarge, cpu=64.0%, mem=71.0%, p95=330.0ms, cost=$0.17/hr, autoscaling=True (latency>SLA, availability<SLA)",
+      "trade_offs": "Fast and deterministic, but ignores history, multi-objective scoring, and candidate instance catalog.",
+      "monitoring_plan": "Re-evaluate the same threshold rules next window.",
+      "mechanism": "Simple Reflex"
+    },
+    {
+      "agent": "Model-Based Reflex",
+      "recommendation": "scale_up",
+      "reasoning": "Model-based reflex used internal state: believed breach_streak=1, avg_cpu=64.0, avg_p95=330.0.",
+      "candidates": [
+        "scale_up"
+      ],
+      "current_state_summary": "Ambiguous mixed signals: instance=c5.xlarge, cpu=64.0%, mem=71.0%, p95=330.0ms, cost=$0.17/hr, autoscaling=True (latency>SLA, availability<SLA)",
+      "trade_offs": "Uses short memory of unseen trend, but still no explicit goal search or utility ranking.",
+      "monitoring_plan": "Track breach/low-util streaks across evaluation windows.",
+      "mechanism": "Model-Based Reflex",
+      "internal_state": {
+        "recent_cpu": [
+          64.0
+        ],
+        "recent_p95": [
+          330.0
+        ],
+        "recent_cost": [
+          0.17
+        ],
+        "breach_streak": 1,
+        "low_util_streak": 0
+      }
+    },
+    {
+      "agent": "Goal-Based",
+      "recommendation": "scale_up",
+      "reasoning": "Looked ahead over 5 actions; 3 pass the goal test. Took first passing plan (scale_up). Checks: scale_up:pass, enable_autoscaling:pass, rightsize_compute:pass, scale_down:fail, keep_current:fail.",
+      "candidates": [
+        "scale_up",
+        "enable_autoscaling",
+        "rightsize_compute"
+      ],
+      "current_state_summary": "Ambiguous mixed signals: instance=c5.xlarge, cpu=64.0%, mem=71.0%, p95=330.0ms, cost=$0.17/hr, autoscaling=True (latency>SLA, availability<SLA)",
+      "trade_offs": "All passing plans treated as equally good (no utility ranking).",
+      "monitoring_plan": "Verify predicted p95/cost after the change window.",
+      "mechanism": "Goal-Based",
+      "predicted_outcome": {
+        "p95_response_ms": 181.50000000000003,
+        "availability_pct": 99.7,
+        "hourly_cost_usd": 0.30600000000000005,
+        "autoscaling_enabled": true
+      },
+      "goal_checks": [
+        "scale_up:pass",
+        "enable_autoscaling:pass",
+        "rightsize_compute:pass",
+        "scale_down:fail",
+        "keep_current:fail"
+      ]
+    },
+    {
+      "agent": "Utility-Based",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Maximized expected utility among feasible plans. Ranking: [enable_autoscaling=-14.45, rightsize_compute=-20.30, scale_up=-30.60].",
+      "candidates": [
+        "enable_autoscaling",
+        "rightsize_compute",
+        "scale_up"
+      ],
+      "current_state_summary": "Ambiguous mixed signals: instance=c5.xlarge, cpu=64.0%, mem=71.0%, p95=330.0ms, cost=$0.17/hr, autoscaling=True (latency>SLA, availability<SLA)",
+      "trade_offs": "Balances latency penalty, availability gap, and hourly cost; uses advertised/static beliefs only.",
+      "monitoring_plan": "Compare realized utility vs predicted after one billing day.",
+      "mechanism": "Utility-Based",
+      "utility_ranking": [
+        [
+          "enable_autoscaling",
+          -14.449999999999719
+        ],
+        [
+          "rightsize_compute",
+          -20.29999999999972
+        ],
+        [
+          "scale_up",
+          -30.600000000000005
+        ]
+      ]
+    },
+    {
+      "agent": "Learning",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Maximized expected utility among feasible plans. Ranking: [enable_autoscaling=-14.45, rightsize_compute=-20.30, scale_up=-27.27]. Experience-adjusted success rates: enable_autoscaling=0.50, rightsize_compute=0.50, scale_up=0.67.",
+      "candidates": [
+        "enable_autoscaling",
+        "rightsize_compute",
+        "scale_up"
+      ],
+      "current_state_summary": "Ambiguous mixed signals: instance=c5.xlarge, cpu=64.0%, mem=71.0%, p95=330.0ms, cost=$0.17/hr, autoscaling=True (latency>SLA, availability<SLA)",
+      "trade_offs": "Improves with outcomes, but needs enough episodes and occasional exploration.",
+      "monitoring_plan": "Compare realized utility vs predicted after one billing day.",
+      "mechanism": "Learning",
+      "utility_ranking": [
+        [
+          "enable_autoscaling",
+          -14.449999999999719
+        ],
+        [
+          "rightsize_compute",
+          -20.29999999999972
+        ],
+        [
+          "scale_up",
+          -27.266666666666673
+        ]
+      ],
+      "learning_stats": {
+        "keep_current": {
+          "success_rate": 0.5,
+          "success": 1,
+          "failure": 1
+        },
+        "scale_up": {
+          "success_rate": 0.667,
+          "success": 2,
+          "failure": 1
+        },
+        "scale_down": {
+          "success_rate": 0.667,
+          "success": 2,
+          "failure": 1
+        },
+        "enable_autoscaling": {
+          "success_rate": 0.5,
+          "success": 1,
+          "failure": 1
+        },
+        "rightsize_compute": {
+          "success_rate": 0.5,
+          "success": 1,
+          "failure": 1
+        }
+      },
+      "limitations": "Early counts are priors; sparse feedback can bias preferences. Exploration may temporarily pick a suboptimal plan."
+    },
+    {
+      "agent": "LLM (tool-evidence fallback)",
+      "recommendation": "scale_up",
+      "reasoning": "Ollama/LangChain unavailable; used deterministic tool evidence fallback. Errors: langchain=No module named 'langchain_core'; ollama=No module named 'ollama'. Recommendation=scale_up from tools ['get_resource_metrics', 'get_cost_estimate'].",
+      "tool_trace": [
+        {
+          "tool": "get_resource_metrics",
+          "args": {
+            "scenario_id": "D"
+          },
+          "result": {
+            "scenario_id": "D",
+            "scenario_name": "Ambiguous mixed signals",
+            "kind": "edge",
+            "description": "Latency is slightly high, cost is near budget, and CPU is moderate with intermittent spikes.",
+            "metrics": {
+              "instance_type": "c5.xlarge",
+              "cpu_util_pct": 64.0,
+              "memory_util_pct": 71.0,
+              "p95_response_ms": 330.0,
+              "error_rate_pct": 0.9,
+              "requests_per_min": 310.0,
+              "peak_cpu_util_pct": 84.0,
+              "offpeak_cpu_util_pct": 35.0,
+              "hourly_cost_usd": 0.17,
+              "autoscaling_enabled": true,
+              "availability_pct": 99.4
+            }
+          }
+        },
+        {
+          "tool": "get_cost_estimate",
+          "args": {
+            "instance_type": "c5.xlarge"
+          },
+          "result": {
+            "instance_type": "c5.xlarge",
+            "hourly_usd": 0.17,
+            "monthly_usd": 122.4,
+            "hours_per_month": 720,
+            "spec": {
+              "vcpus": 4,
+              "memory_gb": 8,
+              "hourly_usd": 0.17,
+              "burst": false
+            },
+            "cheaper_alternatives": [
+              {
+                "instance_type": "t3.medium",
+                "hourly_usd": 0.0416,
+                "monthly_usd": 29.95
+              },
+              {
+                "instance_type": "t3.large",
+                "hourly_usd": 0.0832,
+                "monthly_usd": 59.9
+              },
+              {
+                "instance_type": "m5.large",
+                "hourly_usd": 0.096,
+                "monthly_usd": 69.12
+              }
+            ]
+          }
+        }
+      ],
+      "candidates": [
+        "scale_up"
+      ],
+      "current_state_summary": "Ambiguous mixed signals: instance=c5.xlarge, cpu=64.0%, mem=71.0%, p95=330.0ms, cost=$0.17/hr, autoscaling=True (latency>SLA, availability<SLA)",
+      "trade_offs": "Grounded in tool evidence; simulation only; model may mis-rank soft trade-offs.",
+      "monitoring_plan": "Track p95 latency, CPU, and hourly cost for 24h after any change.",
+      "model": "qwen2.5:1.5b-instruct",
+      "tools_called": [
+        "get_resource_metrics",
+        "get_cost_estimate"
+      ]
+    }
+  ],
+  "comparison": [
+    {
+      "agent": "Simple Reflex",
+      "recommendation": "scale_up",
+      "reasoning": "Simple reflex: IF cpu>=85 OR p95>300 THEN scale_up. Observed cpu=64.0%, p95=330.0ms, cost=$0.17/hr, gap=49.0."
+    },
+    {
+      "agent": "Model-Based Reflex",
+      "recommendation": "scale_up",
+      "reasoning": "Model-based reflex used internal state: believed breach_streak=1, avg_cpu=64.0, avg_p95=330.0."
+    },
+    {
+      "agent": "Goal-Based",
+      "recommendation": "scale_up",
+      "reasoning": "Looked ahead over 5 actions; 3 pass the goal test. Took first passing plan (scale_up). Checks: scale_up:pass, enable_autoscaling:pass, rightsize_compute:pass, scale_down:fail, keep_current:fail."
+    },
+    {
+      "agent": "Utility-Based",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Maximized expected utility among feasible plans. Ranking: [enable_autoscaling=-14.45, rightsize_compute=-20.30, scale_up=-30.60]."
+    },
+    {
+      "agent": "Learning",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Maximized expected utility among feasible plans. Ranking: [enable_autoscaling=-14.45, rightsize_compute=-20.30, scale_up=-27.27]. Experience-adjusted success rates: enable_autoscaling=0.50, rightsize_compute=0.50, scale_up=0.67."
+    },
+    {
+      "agent": "LLM (tool-evidence fallback)",
+      "recommendation": "scale_up",
+      "reasoning": "Ollama/LangChain unavailable; used deterministic tool evidence fallback. Errors: langchain=No module named 'langchain_core'; ollama=No module named 'ollama'. Recommendation=scale_up from tools ['get_resource_metrics', 'get_cost_estimate']."
+    }
+  ],
+  "why_decisions_differ": "Agents differ because each uses a different decision mechanism (rules vs state vs goal test vs utility vs learned rates vs LLM+tools). scale_up: Simple Reflex, Model-Based Reflex, Goal-Based, LLM (tool-evidence fallback) | enable_autoscaling: Utility-Based, Learning"
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "scenario": "A",
+    "agent": "Simple Reflex",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "A",
+    "agent": "Model-Based Reflex",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "A",
+    "agent": "Goal-Based",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "A",
+    "agent": "Utility-Based",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "A",
+    "agent": "Learning",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "A",
+    "agent": "LLM (tool-evidence fallback)",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "B",
+    "agent": "Simple Reflex",
+    "recommendation": "scale_down"
+  },
+  {
+    "scenario": "B",
+    "agent": "Model-Based Reflex",
+    "recommendation": "scale_down"
+  },
+  {
+    "scenario": "B",
+    "agent": "Goal-Based",
+    "recommendation": "enable_autoscaling"
+  },
+  {
+    "scenario": "B",
+    "agent": "Utility-Based",
+    "recommendation": "scale_down"
+  },
+  {
+    "scenario": "B",
+    "agent": "Learning",
+    "recommendation": "scale_down"
+  },
+  {
+    "scenario": "B",
+    "agent": "LLM (tool-evidence fallback)",
+    "recommendation": "scale_down"
+  },
+  {
+    "scenario": "C",
+    "agent": "Simple Reflex",
+    "recommendation": "enable_autoscaling"
+  },
+  {
+    "scenario": "C",
+    "agent": "Model-Based Reflex",
+    "recommendation": "enable_autoscaling"
+  },
+  {
+    "scenario": "C",
+    "agent": "Goal-Based",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "C",
+    "agent": "Utility-Based",
+    "recommendation": "enable_autoscaling"
+  },
+  {
+    "scenario": "C",
+    "agent": "Learning",
+    "recommendation": "enable_autoscaling"
+  },
+  {
+    "scenario": "C",
+    "agent": "LLM (tool-evidence fallback)",
+    "recommendation": "keep_current"
+  },
+  {
+    "scenario": "D",
+    "agent": "Simple Reflex",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "D",
+    "agent": "Model-Based Reflex",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "D",
+    "agent": "Goal-Based",
+    "recommendation": "scale_up"
+  },
+  {
+    "scenario": "D",
+    "agent": "Utility-Based",
+    "recommendation": "enable_autoscaling"
+  },
+  {
+    "scenario": "D",
+    "agent": "Learning",
+    "recommendation": "enable_autoscaling"
+  },
+  {
+    "scenario": "D",
+    "agent": "LLM (tool-evidence fallback)",
+    "recommendation": "scale_up"
+  }
+]

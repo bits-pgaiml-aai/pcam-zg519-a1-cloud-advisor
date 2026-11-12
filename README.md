@@ -4,7 +4,10 @@
 **Assignment-1 · Set-3 · Group 11**  
 **Topic:** Cloud Resource and Cost Optimization Advisor
 
-Compares five classical agents and one local Ollama LLM agent on the same simulated cloud scenarios.
+Implementation by **Venkata Srinivasa Rao Tunuguntla** (repo root).  
+Team bake-off process: [`TEAM.md`](TEAM.md) · [`docs/WORK_SPLIT.md`](docs/WORK_SPLIT.md).
+
+Compares five classical agents and one local Ollama LLM agent on the **same** simulated cloud scenarios.
 
 | Agent | Decision idea |
 |-------|----------------|
@@ -32,7 +35,7 @@ python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 
-# Ollama must be running
+# Ollama must be running for the LLM agent
 ollama serve
 ollama pull qwen2.5:1.5b-instruct
 ```
@@ -53,12 +56,28 @@ streamlit run app.py
 
 ```bash
 python -m src.cli A
+python -m src.cli B --save evidence/scenario_B.json
+python -m src.cli C --no-llm
+python -m src.cli D
 ```
 
-## Team approach
+Generate classical + LLM evidence for A/B/C/D:
 
-Each member implements the full assignment independently; we compare against the rubric and submit the best one.  
-Details: [`TEAM.md`](TEAM.md) · [`docs/WORK_SPLIT.md`](docs/WORK_SPLIT.md).
+```bash
+python scripts/generate_evidence.py
+```
+
+## Expected outputs shown
+
+For each agent/scenario the UI and JSON include:
+
+- Current-state summary
+- Candidate configurations / actions
+- Cost/performance trade-offs
+- Recommendation
+- Monitoring plan
+- LLM tool evidence (when enabled)
+- Learning stats / limitations (Learning agent)
 
 ## Project layout
 
@@ -69,9 +88,11 @@ src/agents/            Five classical agents
 src/tools/             Mock cloud tools for LLM
 src/llm_agent.py       Ollama + LangChain tool agent
 src/runner.py          Shared evaluation harness
+scripts/               Evidence helpers
 data/learning_history.json
-evidence/              Screenshots / test result dumps
-docs/                  Extra write-ups
+evidence/              Test result dumps
+screenshots/           UI screenshots
+docs/                  Write-ups
 ```
 
 ## Submission checklist
@@ -81,8 +102,9 @@ docs/                  Extra write-ups
 - [x] Shared scenarios A–D (includes edge)
 - [x] Streamlit comparison UI
 - [x] Learning agent experience updates
-- [ ] Screenshots + comparison write-up
-- [ ] Demo recording (optional)
+- [x] README + setup instructions
+- [ ] Screenshots (capture from Streamlit before submit)
+- [ ] Group bake-off selection recorded in `docs/SELECTION_NOTES.md`
 
 ## Disclaimer
 

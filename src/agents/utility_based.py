@@ -6,6 +6,8 @@ from .goal_based import GoalBasedAgent
 
 
 class UtilityBasedAgent(GoalBasedAgent):
+    """Scores feasible plans and picks the highest expected utility."""
+
     name = "Utility-Based"
 
     def expected_utility(self, percept: dict[str, Any], action: str) -> float:
@@ -37,28 +39,33 @@ class UtilityBasedAgent(GoalBasedAgent):
         best_u, best = ranked[0]
         if best_u == float("-inf"):
             return self._result(
+                percept,
                 recommendation="escalate_to_human",
-                reasoning="No feasible action under hard constraints; cannot score utility.",
+                reasoning="No feasible action under hard constraints; utility undefined.",
                 candidates=[],
-                extras={
-                    "current_state_summary": percept["description"],
-                    "trade_offs": "Utility undefined when all plans fail constraints.",
-                    "monitoring_plan": "Relax one constraint or gather more capacity options.",
-                    "utility_ranking": [(a, u) for u, a in ranked],
-                },
+                trade_offs="Cannot optimize when every plan fails the goal test.",
+                monitoring_plan="Relax one constraint or add capacity options.",
+                extras={"utility_ranking": [(a, u) for u, a in ranked]},
             )
 
         shown = ", ".join(
             f"{action}={utility:.2f}" for utility, action in ranked if utility != float("-inf")
         )
         return self._result(
+            percept,
             recommendation=best,
-            reasoning=f"Maximized expected utility among feasible plans. Ranking: [{shown}].",
+            reasoning=(
+                f"Maximized expected utility among feasible plans. Ranking: [{shown}]."
+            ),
             candidates=[a for u, a in ranked if u != float("-inf")],
+            trade_offs=(
+                "Balances latency penalty, availability gap, and hourly cost; "
+                "uses advertised/static beliefs only."
+            ),
+            monitoring_plan="Compare realized utility vs predicted after one billing day.",
             extras={
-                "current_state_summary": percept["description"],
-                "trade_offs": "Balances latency penalty, availability gap, and hourly cost.",
-                "monitoring_plan": "Compare realized utility vs predicted after one billing day.",
-                "utility_ranking": [(a, u) for u, a in ranked if u != float("-inf")],
+                "utility_ranking": [
+                    (a, u) for u, a in ranked if u != float("-inf")
+                ]
             },
         )

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from src.world import summarize_state
+
 
 class BaseAgent:
     name = "base"
@@ -14,19 +16,24 @@ class BaseAgent:
 
     def _result(
         self,
+        percept: dict[str, Any],
         recommendation: str,
         reasoning: str,
         candidates: list[str] | None = None,
+        trade_offs: str = "",
+        monitoring_plan: str = "",
         extras: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        payload = {
+        payload: dict[str, Any] = {
             "agent": self.name,
             "recommendation": recommendation,
             "reasoning": reasoning,
-            "candidates": candidates or [],
-            "current_state_summary": "",
-            "trade_offs": "",
-            "monitoring_plan": "",
+            "candidates": candidates or [recommendation],
+            "current_state_summary": summarize_state(percept),
+            "trade_offs": trade_offs,
+            "monitoring_plan": monitoring_plan
+            or "Monitor p95 latency, CPU, availability, and hourly cost for 24h.",
+            "mechanism": self.name,
         }
         if extras:
             payload.update(extras)

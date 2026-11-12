@@ -4,28 +4,27 @@ BITS Pilani WILP · PGAIML · PCAM ZG519 Agentic AI · Assignment-1 (Set-3)
 **Due:** Wednesday, 18 November 2026, 11:59 PM  
 **Repo:** https://github.com/bits-pgaiml-aai/pcam-zg519-a1-cloud-advisor
 
-## Working model (decided in team discussion)
+## Working model
 
 Each member implements the **full assignment independently**.  
-We then compare all four versions against the rubric and **submit the strongest one** as the group submission.
+We compare against the rubric and **submit the strongest one**.
 
-| Name | Implementation folder / branch | Status |
-|------|--------------------------------|--------|
-| S. Bhagat Singh | `members/bhagat/` or branch `member/bhagat` | In progress |
-| Karthik K | `members/karthik/` or branch `member/karthik` | In progress |
-| Snehalatha M | `members/snehalatha/` or branch `member/snehalatha` | In progress |
-| Venkata Srinivasa Rao Tunuguntla | `members/venkat/` or branch `member/venkat` | In progress |
+| Name | Where to put / find implementation | Status |
+|------|--------------------------------------|--------|
+| S. Bhagat Singh | own branch or personal folder (your choice) | In progress |
+| Karthik K | own branch or personal folder (your choice) | In progress |
+| Snehalatha M | own branch or personal folder (your choice) | In progress |
+| Venkata Srinivasa Rao Tunuguntla | **repo root** (this working tree) | Implemented |
 
-Shared reference scaffold remains at repo root (starter only). Final submission will replace/promote the winning implementation.
+Venkat’s runnable package is the root project (`app.py`, `src/`, …), not under `members/`.
 
-See [`docs/WORK_SPLIT.md`](docs/WORK_SPLIT.md) for rules, rubric checklist, and selection process.
+See [`docs/WORK_SPLIT.md`](docs/WORK_SPLIT.md) and [`docs/SELECTION_NOTES.md`](docs/SELECTION_NOTES.md).
 
 ## Shared contracts (every implementation must include)
 
 - Topic: Cloud Resource and Cost Optimization Advisor
-- Scenarios: A (critical), B (cost), C (peak/off-peak), plus edge/ambiguous (D or equivalent)
-- Five classical agents: Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, Learning
-- One LLM agent: local Ollama + LangChain tool calling (≥2 tools, evidence used)
+- Scenarios: A (critical), B (cost), C (peak/off-peak), plus edge/ambiguous
+- Five classical agents + one Ollama/LangChain LLM agent (≥2 tools)
 - Streamlit UI with shared-scenario comparison
-- Learning agent updates experience / success-failure history
+- Learning agent experience updates
 - README, requirements.txt, screenshots, test results
