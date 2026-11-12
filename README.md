@@ -68,6 +68,18 @@ Generate classical + LLM evidence for A/B/C/D:
 python scripts/generate_evidence.py
 ```
 
+## Google Colab notebook (with validation)
+
+Open [`notebooks/Cloud_Advisor_Colab_Validation.ipynb`](notebooks/Cloud_Advisor_Colab_Validation.ipynb) in Colab and **Runtime → Run all**.
+
+It clones this repo, runs scenarios A–D, validates classical decisions, mock tools, LLM tool-evidence path (`qwen3:latest` if Ollama is available), and learning updates. Final cell should print **ALL CHECKS PASSED**.
+
+Local equivalent:
+
+```bash
+python scripts/run_colab_validation.py
+```
+
 ## Expected outputs shown
 
 For each agent/scenario the UI and JSON include:
