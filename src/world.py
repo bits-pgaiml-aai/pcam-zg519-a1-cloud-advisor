@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+import random
 from copy import deepcopy
 from typing import Any
 
@@ -117,6 +119,27 @@ def estimate_monthly_cost(hourly_usd: float) -> float:
     return round(hourly_usd * 24 * 30, 2)
 
 
+def build_timeseries(metrics: dict[str, Any], seed: int = 42) -> dict[str, list[float]]:
+    rng = random.Random(seed)
+    cpu_now = metrics["cpu_util_pct"]
+    peak = metrics["peak_cpu_util_pct"]
+    offpeak = metrics["offpeak_cpu_util_pct"]
+    p95 = metrics["p95_response_ms"]
+    cpu_series = []
+    rt_series = []
+    for hour in range(24):
+        day_factor = 0.55 + 0.45 * abs(math.sin((hour - 8) / 24 * math.pi))
+        cpu = offpeak + (peak - offpeak) * day_factor
+        cpu = max(1.0, min(99.0, cpu + rng.uniform(-3.0, 3.0)))
+        # Pull series toward the reported "now" point near the end of the day.
+        if hour >= 18:
+            cpu = 0.7 * cpu + 0.3 * cpu_now
+        rt = p95 * (0.85 + 0.3 * (cpu / max(peak, 1.0))) + rng.uniform(-8.0, 8.0)
+        cpu_series.append(round(cpu, 1))
+        rt_series.append(round(max(10.0, rt), 1))
+    return {"hour": list(range(24)), "cpu_pct": cpu_series, "response_ms": rt_series}
+
+
 def candidate_configs(current_instance: str) -> list[dict[str, Any]]:
     current = INSTANCE_CATALOG[current_instance]
     configs = []
@@ -180,6 +203,8 @@ class CloudWorld:
     def perceive(self, scenario_id: str) -> dict[str, Any]:
         scenario = self.get_scenario(scenario_id)
         metrics = scenario["metrics"]
+        series = build_timeseries(metrics, seed=ord(scenario["id"][0]))
+        recent = series["cpu_pct"][-6:]
         return {
             "scenario_id": scenario["id"],
             "scenario_name": scenario["name"],
@@ -189,4 +214,17 @@ class CloudWorld:
             "sla": deepcopy(SLA_TARGETS),
             "candidates": candidate_configs(metrics["instance_type"]),
             "catalog": deepcopy(INSTANCE_CATALOG),
+            "timeseries": series,
+            "kpis": {
+                "instance": metrics["instance_type"],
+                "monthly_cost_usd": estimate_monthly_cost(metrics["hourly_cost_usd"]),
+                "cpu_now_pct": metrics["cpu_util_pct"],
+                "cpu_avg_6h_pct": round(sum(recent) / len(recent), 1),
+                "cpu_limit_pct": 80.0,
+                "response_now_ms": round(series["response_ms"][-1], 1),
+                "p95_response_ms": metrics["p95_response_ms"],
+                "response_target_ms": SLA_TARGETS["p95_response_ms"],
+                "availability_pct": metrics["availability_pct"],
+                "availability_target_pct": SLA_TARGETS["availability_pct"],
+            },
         }

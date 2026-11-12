@@ -20,8 +20,15 @@ class LearningAgent(UtilityBasedAgent):
         history_path: Path | None = None,
         explore: float = 0.15,
         seed: int = 7,
+        cost_weight: float = 0.4,
+        performance_weight: float = 0.4,
+        availability_weight: float = 0.2,
     ) -> None:
-        super().__init__()
+        super().__init__(
+            cost_weight=cost_weight,
+            performance_weight=performance_weight,
+            availability_weight=availability_weight,
+        )
         self.history_path = history_path or DEFAULT_HISTORY_PATH
         self.explore = explore
         self.rng = random.Random(seed)

@@ -37,13 +37,14 @@ pip install -r requirements.txt
 
 # Ollama must be running for the LLM agent
 ollama serve
-ollama pull qwen2.5:1.5b-instruct
+ollama pull qwen3:latest
 ```
 
-Optional model override:
+Optional overrides:
 
 ```bash
-set OLLAMA_MODEL=qwen3:1.7b
+set OLLAMA_MODEL=qwen3:latest
+set OLLAMA_HOST=http://localhost:11434
 ```
 
 ## Run Streamlit UI

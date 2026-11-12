@@ -7,7 +7,7 @@ from typing import Any
 from src.tools.cloud_tools import TOOL_FUNCTIONS
 from src.world import summarize_state, CloudWorld
 
-DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:1.5b-instruct")
+DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:latest")
 
 SYSTEM_PROMPT = """
 You are a Cloud Resource and Cost Optimization Advisor.
@@ -208,7 +208,8 @@ def _run_langchain(
     from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
     from langchain_ollama import ChatOllama
 
-    llm = ChatOllama(model=model_name, temperature=0).bind_tools(
+    base_url = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+    llm = ChatOllama(model=model_name, temperature=0, base_url=base_url).bind_tools(
         [
             TOOL_FUNCTIONS["get_resource_metrics"],
             TOOL_FUNCTIONS["get_cost_estimate"],

@@ -1,8 +1,16 @@
 from __future__ import annotations
 
+import os
 from typing import Any
 
-from src.agents import CLASSICAL_AGENTS, LearningAgent
+from src.agents import (
+    GoalBasedAgent,
+    LearningAgent,
+    ModelBasedReflexAgent,
+    SimpleReflexAgent,
+    UtilityBasedAgent,
+)
+from src.display import enrich_result
 from src.llm_agent import run_llm_agent
 from src.world import CloudWorld
 
@@ -11,28 +19,54 @@ def run_all_agents(
     scenario_id: str,
     include_llm: bool = True,
     learning_agent: LearningAgent | None = None,
+    utility_weights: dict[str, float] | None = None,
+    llm_model: str | None = None,
+    llm_host: str | None = None,
 ) -> dict[str, Any]:
     world = CloudWorld()
     percept = world.perceive(scenario_id)
-    results = []
+    weights = utility_weights or {
+        "cost": 0.4,
+        "performance": 0.4,
+        "availability": 0.2,
+    }
 
-    for name, cls in CLASSICAL_AGENTS.items():
-        agent = learning_agent if name == "Learning" and learning_agent else cls()
-        results.append(agent.decide(percept))
+    if learning_agent is None:
+        learning_agent = LearningAgent(
+            cost_weight=weights["cost"],
+            performance_weight=weights["performance"],
+            availability_weight=weights["availability"],
+        )
+
+    agents = [
+        SimpleReflexAgent(),
+        ModelBasedReflexAgent(),
+        GoalBasedAgent(),
+        UtilityBasedAgent(
+            cost_weight=weights["cost"],
+            performance_weight=weights["performance"],
+            availability_weight=weights["availability"],
+        ),
+        learning_agent,
+    ]
+    results = [enrich_result(percept, agent.decide(percept)) for agent in agents]
 
     if include_llm:
-        results.append(run_llm_agent(scenario_id))
+        if llm_host:
+            os.environ["OLLAMA_HOST"] = llm_host
+        results.append(
+            enrich_result(percept, run_llm_agent(scenario_id, model=llm_model))
+        )
 
     comparison = [
         {
             "agent": r.get("agent"),
             "recommendation": r.get("recommendation"),
+            "display": r.get("display_recommendation"),
             "reasoning": r.get("reasoning"),
         }
         for r in results
     ]
-
-    why_differ = _explain_differences(comparison)
 
     return {
         "scenario": {
@@ -43,10 +77,13 @@ def run_all_agents(
             "metrics": percept["metrics"],
             "sla": percept["sla"],
             "candidates": percept["candidates"],
+            "timeseries": percept["timeseries"],
+            "kpis": percept["kpis"],
         },
         "results": results,
         "comparison": comparison,
-        "why_decisions_differ": why_differ,
+        "why_decisions_differ": _explain_differences(comparison),
+        "utility_weights": weights,
     }
 
 
