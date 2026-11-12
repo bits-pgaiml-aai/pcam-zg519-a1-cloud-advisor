@@ -1,116 +1,79 @@
-# Work split — Group 11
+# Team approach — independent implementations + best-one submission
 
-Fair split by deliverable ownership. Scaffold already exists in the repo; each owner **owns quality** of their area (refine, test, document).
+Updated after team discussion.
 
----
+## Decision
 
-## 1. S. Bhagat Singh — Classical agents (Simple → Goal) + world
+1. **Everyone builds a complete Assignment-1** on their own (all six agents, scenarios, Streamlit, docs).
+2. Near the deadline, we **score each version** against the official rubric.
+3. The **best overall implementation is submitted** as Group 11’s assignment.
+4. Other versions stay in the repo as member archives (learning / backup).
 
-**Owns**
-
-| Task | Files |
-|------|--------|
-| Simple Reflex agent (condition → action only) | `src/agents/simple_reflex.py` |
-| Model-Based Reflex (internal state / streaks) | `src/agents/model_based.py` |
-| Goal-Based (look-ahead + pass/fail goal test) | `src/agents/goal_based.py` |
-| Scenario metrics A–D + catalog polish | `src/world.py` |
-| Short note: why these three differ on A/B/C/D | `docs/agent_notes_reflex_goal.md` |
-
-**Done when**
-
-- [ ] Each agent returns `recommendation`, `reasoning`, `current_state_summary`, `trade_offs`, `monitoring_plan`
-- [ ] Decisions clearly differ by mechanism (not copy-paste)
-- [ ] Scenarios A/B/C match assignment text; D remains the edge/ambiguous case
-- [ ] CLI works without LLM: `python -m src.cli A --no-llm`
+This replaces the earlier “split modules across people” plan.
 
 ---
 
-## 2. Karthik K — Utility + Learning + evaluation
+## What each person must deliver
 
-**Owns**
+A complete package covering all rubric rows (20 marks):
 
-| Task | Files |
-|------|--------|
-| Utility-Based agent (score feasible plans) | `src/agents/utility_based.py` |
-| Learning agent (experience counts, explore, explain effect) | `src/agents/learning.py` |
-| Experience store | `data/learning_history.json` |
-| Learning write-up: how history changes decisions + limitations | `docs/learning_evaluation.md` |
-| Before/after learning demo evidence | `evidence/learning_*.json` |
+| Criterion | Marks | Must show |
+|-----------|------:|-----------|
+| Five classical agents | 5 | Separate, correct decision mechanisms |
+| LLM agent + tool calling | 4 | Local Ollama via LangChain; ≥2 tools; evidence used |
+| Shared scenarios + testing | 3 | ≥3 scenarios (normal, critical, edge); same input to all agents |
+| Streamlit UI + comparison | 3 | Select scenario; show decisions/reasons; clear compare |
+| Learning + evaluation | 3 | Experience/history updates; evidence checked; limitations noted |
+| Documentation + demo | 2 | README, setup, screenshots, organized code |
 
-**Done when**
+Suggested layout (pick one):
 
-- [ ] Utility ranking is visible in decision extras
-- [ ] Learning updates success/failure counts and shows rates in output
-- [ ] Streamlit “Record learning outcome” path verified end-to-end
-- [ ] Limitations acknowledged in docs/UI (sparse data, exploration risk)
+```
+members/<yourname>/
+  README.md
+  requirements.txt
+  app.py
+  src/...
+  evidence/...
+  screenshots/...
+```
 
----
-
-## 3. Snehalatha M — LLM agent + tools
-
-**Owns**
-
-| Task | Files |
-|------|--------|
-| Mock cloud tools (≥2 used every run) | `src/tools/cloud_tools.py` |
-| Ollama + LangChain tool-calling agent | `src/llm_agent.py` |
-| Tool-call evidence dumps for A/B/C (and D) | `evidence/llm_scenario_*.json` |
-| Ollama setup notes (model pull, common errors) | `docs/OLLAMA_SETUP.md` |
-| Pin working versions if needed | `requirements.txt` (LLM-related lines) |
-
-**Done when**
-
-- [ ] Local Ollama model runs (e.g. `qwen2.5:1.5b-instruct` or `qwen3:1.7b`)
-- [ ] Each LLM run calls **at least two** tools and cites evidence in reasoning
-- [ ] Recommendation grounded in tool results (no invented metrics)
-- [ ] Fallback path documented if model skips tool calls
+Or a personal branch: `member/<yourname>` with a full project at root of that branch.
 
 ---
 
-## 4. Venkata Srinivasa Rao Tunuguntla — UI, integration, docs, submit
-
-**Owns**
-
-| Task | Files |
-|------|--------|
-| Shared runner (same percept → all agents) | `src/runner.py`, `src/cli.py` |
-| Streamlit comparison UI | `app.py` |
-| README + run instructions | `README.md`, `docs/RUN_AND_VERIFY.md` |
-| Screenshots for scenarios A/B/C (+ D) | `screenshots/` |
-| Comparison table + why decisions differ | `docs/comparison_writeup.md` |
-| Final zip / submission packaging | `Group15`-style folder if needed |
-
-**Done when**
-
-- [ ] UI: select scenario → show all six decisions + reasons + comparison table
-- [ ] Three required scenario results + screenshots captured
-- [ ] README has setup/run steps teammates can follow
-- [ ] Submission checklist in README marked complete
-
----
-
-## Shared rules (everyone)
-
-1. **Same input:** do not give agents different scenario data for the “fair compare” runs.
-2. **Branch / PR:** optional per person (`member/<name>-…`); merge to `main` after a quick peer look.
-3. **No live cloud changes:** simulation + mock tools only.
-4. **Group sync:** one dry-run together before submission (all scenarios + Learning update + LLM tools visible).
-
-## Suggested timeline (due 18 Nov)
+## Suggested timeline
 
 | When | Milestone |
 |------|-----------|
-| By 11 Nov | Bhagat + Karthik classical/learning agents stable |
-| By 13 Nov | Snehalatha LLM + tools green on Ollama |
-| By 15 Nov | Venkat UI + screenshots + comparison write-up |
-| 16–17 Nov | Full group dry-run + fix gaps |
-| 18 Nov | Submit |
+| By 14 Nov | Personal implementation runnable end-to-end |
+| 15–16 Nov | Self-test all rubric items + screenshots |
+| 16–17 Nov | **Group bake-off:** run each version, score, pick winner |
+| 17–18 Nov | Polish winning version + submit |
 
-## Quick contact map
+---
 
-| If you need… | Ask |
-|--------------|-----|
-| Scenario numbers / SLA | Bhagat |
-| Learning history / utility scoring | Karthik |
-| Ollama / tool traces | Snehalatha |
-| UI / README / screenshots / packaging | Venkat |
+## How we choose the winner
+
+Score each implementation 0–full marks per rubric row (honest group scoring).  
+Winner = highest total. Tie-breakers, in order:
+
+1. LLM tool evidence clearly shown (≥2 tools)
+2. Learning agent history clearly affects decisions
+3. Cleanest Streamlit comparison + docs
+4. Fewest setup issues for a fresh machine
+
+Record the decision in `docs/SELECTION_NOTES.md` (who won, scores, why).
+
+---
+
+## Ground rules
+
+- Topic and required scenarios stay as in the official brief.
+- Simulation only — no live cloud changes.
+- Help each other with blockers (Ollama, Streamlit), but keep implementations independent until selection.
+- After selection, everyone helps polish the winning submission if needed.
+
+## Starter scaffold
+
+Repo root has a shared starter. Use it if helpful, or build your own structure — scoring is on completeness and rubric fit, not on matching the starter exactly.

@@ -55,9 +55,10 @@ streamlit run app.py
 python -m src.cli A
 ```
 
-## Team work split
+## Team approach
 
-Group 11 ownership is in [`TEAM.md`](TEAM.md) and [`docs/WORK_SPLIT.md`](docs/WORK_SPLIT.md).
+Each member implements the full assignment independently; we compare against the rubric and submit the best one.  
+Details: [`TEAM.md`](TEAM.md) · [`docs/WORK_SPLIT.md`](docs/WORK_SPLIT.md).
 
 ## Project layout
 

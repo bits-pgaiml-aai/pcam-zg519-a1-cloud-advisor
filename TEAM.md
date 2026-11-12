@@ -4,21 +4,28 @@ BITS Pilani WILP · PGAIML · PCAM ZG519 Agentic AI · Assignment-1 (Set-3)
 **Due:** Wednesday, 18 November 2026, 11:59 PM  
 **Repo:** https://github.com/bits-pgaiml-aai/pcam-zg519-a1-cloud-advisor
 
-| Name | Workstream | Rubric focus | Marks owned |
-|------|------------|--------------|-------------|
-| S. Bhagat Singh | Classical agents (1–3) + scenario world | Five classical agents (shared) | ~3 of 5 |
-| Karthik K | Utility + Learning agents + learning eval | Classical (rest) + Learning & evaluation | ~2 of 5 + 3 |
-| Snehalatha M | LLM agent + mock tools + Ollama/LangChain | LLM agent and tool calling | 4 |
-| Venkata Srinivasa Rao Tunuguntla | Streamlit UI, integration, docs, screenshots | Shared testing + UI + Documentation | 3 + 3 + 2 |
+## Working model (decided in team discussion)
 
-See [`docs/WORK_SPLIT.md`](docs/WORK_SPLIT.md) for tasks, files, and handoff checklist.
+Each member implements the **full assignment independently**.  
+We then compare all four versions against the rubric and **submit the strongest one** as the group submission.
 
-## Shared contracts
+| Name | Implementation folder / branch | Status |
+|------|--------------------------------|--------|
+| S. Bhagat Singh | `members/bhagat/` or branch `member/bhagat` | In progress |
+| Karthik K | `members/karthik/` or branch `member/karthik` | In progress |
+| Snehalatha M | `members/snehalatha/` or branch `member/snehalatha` | In progress |
+| Venkata Srinivasa Rao Tunuguntla | `members/venkat/` or branch `member/venkat` | In progress |
+
+Shared reference scaffold remains at repo root (starter only). Final submission will replace/promote the winning implementation.
+
+See [`docs/WORK_SPLIT.md`](docs/WORK_SPLIT.md) for rules, rubric checklist, and selection process.
+
+## Shared contracts (every implementation must include)
 
 - Topic: Cloud Resource and Cost Optimization Advisor
-- Scenarios: A (critical), B (cost), C (peak/off-peak), D (edge/ambiguous)
-- Classical agents: Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, Learning
-- LLM: local Ollama (default `qwen2.5:1.5b-instruct`) via LangChain tool calling
-- Tools: `get_resource_metrics`, `get_cost_estimate`, `get_service_level_targets`, `get_scaling_policy`
-- UI: Streamlit (`app.py`)
-- All six agents must receive the **same** scenario percept for fair comparison
+- Scenarios: A (critical), B (cost), C (peak/off-peak), plus edge/ambiguous (D or equivalent)
+- Five classical agents: Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, Learning
+- One LLM agent: local Ollama + LangChain tool calling (≥2 tools, evidence used)
+- Streamlit UI with shared-scenario comparison
+- Learning agent updates experience / success-failure history
+- README, requirements.txt, screenshots, test results
