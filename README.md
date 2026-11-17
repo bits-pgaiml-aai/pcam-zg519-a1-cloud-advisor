@@ -68,6 +68,16 @@ Generate classical + LLM evidence for A/B/C/D:
 python scripts/generate_evidence.py
 ```
 
+## BITS Prayogshala (recommended when local Ollama pull is blocked)
+
+If Zscaler/local network blocks `ollama pull`, run on Prayogshala:
+
+- Portal: https://prayogshala.bits-pilani.ac.in
+- Guide: [`docs/PRAYOGSHALA_SETUP.md`](docs/PRAYOGSHALA_SETUP.md)
+- Linux helper: `bash scripts/prayogshala_bootstrap.sh`
+
+Save all screenshots/evidence under **Workspace** (Linux) or **D:\\** (Windows) before ending the VM session.
+
 ## Google Colab notebook (with validation)
 
 Open [`notebooks/Cloud_Advisor_Colab_Validation.ipynb`](notebooks/Cloud_Advisor_Colab_Validation.ipynb) in Colab and **Runtime → Run all**.
