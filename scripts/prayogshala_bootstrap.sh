@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 HOST="${OLLAMA_HOST:-http://127.0.0.1:11434}"
 PORT="${STREAMLIT_PORT:-8501}"
@@ -20,20 +20,30 @@ if ! curl -fsS "$HOST/" >/dev/null 2>&1; then
 fi
 
 echo "== Ollama status =="
-curl -fsS "$HOST/" || { echo "Ollama not reachable at $HOST"; exit 1; }
+curl -fsS "$HOST/"
+echo
+
+echo "== Installed models =="
+ollama list || true
 
 # Prefer explicit OLLAMA_MODEL; else first installed qwen3*; else qwen3:latest
 if [[ -n "${OLLAMA_MODEL:-}" ]]; then
   MODEL="$OLLAMA_MODEL"
 else
-  MODEL="$(ollama list 2>/dev/null | awk 'NR>1 && $1 ~ /^qwen3/ {print $1; exit}')"
+  MODEL="$(ollama list 2>/dev/null | awk 'NR>1 && $1 ~ /^qwen3(:|$)/ {print $1; exit 0}' || true)"
   if [[ -z "${MODEL}" ]]; then
     MODEL="qwen3:latest"
   fi
 fi
 
 echo "== Selected model: $MODEL =="
-if ollama list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "$MODEL"; then
+
+HAVE_MODEL=0
+if ollama list 2>/dev/null | awk 'NR>1 {print $1}' | grep -Fxc -- "$MODEL" >/dev/null 2>&1; then
+  HAVE_MODEL=1
+fi
+
+if [[ "$HAVE_MODEL" -eq 1 ]]; then
   echo "== Model already present; skip pull =="
 else
   echo "== Pulling model: $MODEL =="
@@ -41,8 +51,11 @@ else
 fi
 
 if [[ ! -d .venv ]]; then
+  echo "== Creating venv =="
   python3 -m venv .venv
 fi
+
+echo "== Activating venv and installing requirements =="
 # shellcheck disable=SC1091
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -50,9 +63,12 @@ pip install -r requirements.txt
 export OLLAMA_HOST="$HOST"
 export OLLAMA_MODEL="$MODEL"
 
-if ss -ltn 2>/dev/null | grep -q ":${PORT} " || netstat -ltn 2>/dev/null | grep -q ":${PORT} "; then
-  echo "== Port ${PORT} is busy; trying $((PORT + 1)) =="
+if (ss -ltn 2>/dev/null || netstat -ltn 2>/dev/null || true) | grep -qE ":${PORT}\\s"; then
+  echo "== Port ${PORT} is busy =="
+  echo "   Free it with:  pkill -f 'streamlit run app.py'"
+  echo "   Or override:   STREAMLIT_PORT=8502 bash scripts/prayogshala_bootstrap.sh"
   PORT=$((PORT + 1))
+  echo "== Using port ${PORT} instead =="
 fi
 
 echo "== Launching Streamlit on :${PORT} with model ${MODEL} =="
