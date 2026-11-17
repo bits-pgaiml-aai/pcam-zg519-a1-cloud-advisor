@@ -1,15 +1,15 @@
 {
   "action_stats": {
     "keep_current": {
-      "success": 6,
+      "success": 13,
       "failure": 1
     },
     "scale_up": {
-      "success": 3,
+      "success": 2,
       "failure": 1
     },
     "scale_down": {
-      "success": 3,
+      "success": 2,
       "failure": 1
     },
     "enable_autoscaling": {
@@ -66,15 +66,45 @@
     },
     {
       "scenario_id": "A",
-      "action": "scale_up",
+      "action": "keep_current",
       "success": true,
-      "notes": "seed success for scale_up"
+      "notes": "Feedback for scenario A"
+    },
+    {
+      "scenario_id": "A",
+      "action": "keep_current",
+      "success": true,
+      "notes": "Feedback for scenario A"
     },
     {
       "scenario_id": "B",
-      "action": "scale_down",
+      "action": "keep_current",
       "success": true,
-      "notes": "seed success for scale_down"
+      "notes": "Feedback for scenario B"
+    },
+    {
+      "scenario_id": "B",
+      "action": "keep_current",
+      "success": true,
+      "notes": "Feedback for scenario B"
+    },
+    {
+      "scenario_id": "C",
+      "action": "keep_current",
+      "success": true,
+      "notes": "Feedback for scenario C"
+    },
+    {
+      "scenario_id": "C",
+      "action": "keep_current",
+      "success": true,
+      "notes": "Feedback for scenario C"
+    },
+    {
+      "scenario_id": "D",
+      "action": "keep_current",
+      "success": true,
+      "notes": "Feedback for scenario D"
     }
   ]
 }
