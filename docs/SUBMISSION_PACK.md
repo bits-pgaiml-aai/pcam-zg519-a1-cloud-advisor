@@ -25,6 +25,7 @@ screenshots/          # scenario_*.png + scenario_*_results.json + INDEX.md
 docs/comparison_table.md
 docs/comparison_writeup.md
 docs/scenario_results_summary.md
+docs/rubric_coverage.md
 docs/learning_evaluation.md
 docs/learning_before_after.md
 docs/SELECTION_NOTES.md

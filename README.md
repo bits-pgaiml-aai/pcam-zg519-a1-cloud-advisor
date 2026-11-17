@@ -125,7 +125,7 @@ screenshots/           UI screenshots
 docs/                  Write-ups (comparison table, learning, submission pack)
 ```
 
-Key docs for graders: [`docs/scenario_results_summary.md`](docs/scenario_results_summary.md) · [`docs/comparison_table.md`](docs/comparison_table.md) · [`docs/SUBMISSION_PACK.md`](docs/SUBMISSION_PACK.md) · [`evidence/llm_live_summary.md`](evidence/llm_live_summary.md)
+Key docs for graders: [`docs/rubric_coverage.md`](docs/rubric_coverage.md) · [`docs/scenario_results_summary.md`](docs/scenario_results_summary.md) · [`docs/comparison_table.md`](docs/comparison_table.md) · [`docs/SUBMISSION_PACK.md`](docs/SUBMISSION_PACK.md) · [`evidence/llm_live_summary.md`](evidence/llm_live_summary.md)
 
 ## Submission checklist
 

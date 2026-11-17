@@ -7,5 +7,6 @@
 | `scenario_C.png` + `scenario_C_results.json` | C | Sharp peak / off-peak variation | `qwen3:1.7b` | get_resource_metrics, get_cost_estimate | `keep_current` |
 | `scenario_D.png` + `scenario_D_results.json` | D | Ambiguous mixed signals | `qwen3:1.7b` | get_resource_metrics, get_cost_estimate | `scale_up` |
 
-One full UI PNG and matching results JSON per scenario.
-See also [`../docs/scenario_results_summary.md`](../docs/scenario_results_summary.md), [`../docs/comparison_table.md`](../docs/comparison_table.md), and `evidence/*.json`.
+Each PNG is a full UI capture including the left **Controls** pane (scenario select, utility weights, Ollama model/host, Run all agents).
+
+See also [`../docs/scenario_results_summary.md`](../docs/scenario_results_summary.md), [`../docs/comparison_table.md`](../docs/comparison_table.md), [`../docs/rubric_coverage.md`](../docs/rubric_coverage.md), and `evidence/*.json`.
