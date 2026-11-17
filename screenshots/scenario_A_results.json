@@ -289,8 +289,8 @@
       },
       "learning_stats": {
         "keep_current": {
-          "success_rate": 0.857,
-          "success": 6,
+          "success_rate": 0.929,
+          "success": 13,
           "failure": 1
         },
         "scale_up": {

@@ -286,7 +286,7 @@
     {
       "agent": "Learning",
       "recommendation": "keep_current",
-      "reasoning": "Highest weighted utility (8.854) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=8.854, scale_up=4.051, enable_autoscaling=0.820, rightsize_compute=0.762]. Experience-adjusted success rates: keep_current=0.91, scale_up=0.67, enable_autoscaling=0.50, rightsize_compute=0.50.",
+      "reasoning": "Highest weighted utility (9.496) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=9.496, scale_up=4.051, enable_autoscaling=0.820, rightsize_compute=0.762]. Experience-adjusted success rates: keep_current=0.94, scale_up=0.67, enable_autoscaling=0.50, rightsize_compute=0.50.",
       "candidates": [
         "keep_current",
         "scale_up",
@@ -300,7 +300,7 @@
       "utility_ranking": [
         [
           "keep_current",
-          8.854118181818182
+          9.495829411764706
         ],
         [
           "scale_up",
@@ -322,8 +322,8 @@
       },
       "learning_stats": {
         "keep_current": {
-          "success_rate": 0.909,
-          "success": 10,
+          "success_rate": 0.941,
+          "success": 16,
           "failure": 1
         },
         "scale_up": {
@@ -443,7 +443,7 @@
       "agent": "Learning",
       "recommendation": "keep_current",
       "display": "KEEP_CURRENT - Keep m5.xlarge",
-      "reasoning": "Highest weighted utility (8.854) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=8.854, scale_up=4.051, enable_autoscaling=0.820, rightsize_compute=0.762]. Experience-adjusted success rates: keep_current=0.91, scale_up=0.67, enable_autoscaling=0.50, rightsize_compute=0.50."
+      "reasoning": "Highest weighted utility (9.496) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=9.496, scale_up=4.051, enable_autoscaling=0.820, rightsize_compute=0.762]. Experience-adjusted success rates: keep_current=0.94, scale_up=0.67, enable_autoscaling=0.50, rightsize_compute=0.50."
     },
     {
       "agent": "LLM (Ollama/LangChain)",
