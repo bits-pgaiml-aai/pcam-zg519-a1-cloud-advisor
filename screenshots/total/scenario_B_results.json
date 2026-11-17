@@ -1,0 +1,461 @@
+{
+  "scenario": {
+    "id": "B",
+    "name": "Over-provisioned expensive instance",
+    "kind": "normal",
+    "description": "CPU and memory utilization are low, but the instance is expensive.",
+    "metrics": {
+      "instance_type": "m5.2xlarge",
+      "cpu_util_pct": 18.0,
+      "memory_util_pct": 22.0,
+      "p95_response_ms": 140.0,
+      "error_rate_pct": 0.2,
+      "requests_per_min": 95.0,
+      "peak_cpu_util_pct": 28.0,
+      "offpeak_cpu_util_pct": 8.0,
+      "hourly_cost_usd": 0.384,
+      "autoscaling_enabled": false,
+      "availability_pct": 99.9
+    },
+    "sla": {
+      "p95_response_ms": 300,
+      "availability_pct": 99.5,
+      "max_hourly_cost_usd": 0.25
+    },
+    "candidates": [
+      {
+        "instance_type": "t3.medium",
+        "vcpus": 2,
+        "memory_gb": 4,
+        "hourly_usd": 0.0416,
+        "monthly_usd": 29.95,
+        "delta_vs_current_hourly": -0.3424,
+        "is_current": false
+      },
+      {
+        "instance_type": "t3.large",
+        "vcpus": 2,
+        "memory_gb": 8,
+        "hourly_usd": 0.0832,
+        "monthly_usd": 59.9,
+        "delta_vs_current_hourly": -0.3008,
+        "is_current": false
+      },
+      {
+        "instance_type": "m5.large",
+        "vcpus": 2,
+        "memory_gb": 8,
+        "hourly_usd": 0.096,
+        "monthly_usd": 69.12,
+        "delta_vs_current_hourly": -0.288,
+        "is_current": false
+      },
+      {
+        "instance_type": "m5.xlarge",
+        "vcpus": 4,
+        "memory_gb": 16,
+        "hourly_usd": 0.192,
+        "monthly_usd": 138.24,
+        "delta_vs_current_hourly": -0.192,
+        "is_current": false
+      },
+      {
+        "instance_type": "m5.2xlarge",
+        "vcpus": 8,
+        "memory_gb": 32,
+        "hourly_usd": 0.384,
+        "monthly_usd": 276.48,
+        "delta_vs_current_hourly": 0.0,
+        "is_current": true
+      },
+      {
+        "instance_type": "c5.xlarge",
+        "vcpus": 4,
+        "memory_gb": 8,
+        "hourly_usd": 0.17,
+        "monthly_usd": 122.4,
+        "delta_vs_current_hourly": -0.214,
+        "is_current": false
+      }
+    ],
+    "timeseries": {
+      "hour": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "cpu_pct": [
+        24.2,
+        24.6,
+        23.9,
+        24.8,
+        26.1,
+        22.3,
+        23.0,
+        19.4,
+        20.4,
+        20.2,
+        23.4,
+        21.7,
+        24.8,
+        27.3,
+        24.3,
+        25.0,
+        25.0,
+        30.1,
+        26.0,
+        24.1,
+        23.0,
+        24.8,
+        25.4,
+        22.8
+      ],
+      "response_ms": [
+        154.3,
+        155.1,
+        160.6,
+        160.2,
+        158.0,
+        146.4,
+        146.7,
+        142.7,
+        148.9,
+        149.8,
+        161.8,
+        157.6,
+        159.3,
+        155.3,
+        155.1,
+        153.1,
+        163.2,
+        170.2,
+        156.5,
+        153.7,
+        147.3,
+        154.9,
+        158.1,
+        158.8
+      ]
+    },
+    "kpis": {
+      "instance": "m5.2xlarge",
+      "monthly_cost_usd": 276.48,
+      "cpu_now_pct": 18.0,
+      "cpu_avg_6h_pct": 24.3,
+      "cpu_limit_pct": 80.0,
+      "response_now_ms": 158.8,
+      "p95_response_ms": 140.0,
+      "response_target_ms": 300,
+      "availability_pct": 99.9,
+      "availability_target_pct": 99.5
+    }
+  },
+  "results": [
+    {
+      "agent": "Simple Reflex",
+      "recommendation": "scale_down",
+      "reasoning": "Simple reflex: IF cpu<=25 AND cost>0.25 THEN scale_down. Observed cpu=18.0%, p95=140.0ms, cost=$0.384/hr, gap=20.0.",
+      "candidates": [
+        "scale_down"
+      ],
+      "current_state_summary": "Over-provisioned expensive instance: instance=m5.2xlarge, cpu=18.0%, mem=22.0%, p95=140.0ms, cost=$0.384/hr, autoscaling=False (cost>budget)",
+      "trade_offs": "Fast and deterministic, but ignores history, multi-objective scoring, and candidate instance catalog.",
+      "monitoring_plan": "Re-evaluate the same threshold rules next window.",
+      "mechanism": "Simple Reflex",
+      "display_recommendation": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
+      "target_instance": "t3.medium"
+    },
+    {
+      "agent": "Model-Based Reflex",
+      "recommendation": "scale_down",
+      "reasoning": "Model-based reflex used internal state: sustained low util streak=1.",
+      "candidates": [
+        "scale_down"
+      ],
+      "current_state_summary": "Over-provisioned expensive instance: instance=m5.2xlarge, cpu=18.0%, mem=22.0%, p95=140.0ms, cost=$0.384/hr, autoscaling=False (cost>budget)",
+      "trade_offs": "Uses short memory of unseen trend, but still no explicit goal search or utility ranking.",
+      "monitoring_plan": "Track breach/low-util streaks across evaluation windows.",
+      "mechanism": "Model-Based Reflex",
+      "internal_state": {
+        "recent_cpu": [
+          18.0
+        ],
+        "recent_p95": [
+          140.0
+        ],
+        "recent_cost": [
+          0.384
+        ],
+        "breach_streak": 0,
+        "low_util_streak": 1
+      },
+      "display_recommendation": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
+      "target_instance": "t3.medium"
+    },
+    {
+      "agent": "Goal-Based",
+      "recommendation": "enable_autoscaling",
+      "reasoning": "Looked ahead over 5 actions; 4 pass the goal test. Took first passing plan (enable_autoscaling). Checks: scale_up:fail, enable_autoscaling:pass, rightsize_compute:pass, scale_down:pass, keep_current:pass.",
+      "candidates": [
+        "enable_autoscaling",
+        "rightsize_compute",
+        "scale_down",
+        "keep_current"
+      ],
+      "current_state_summary": "Over-provisioned expensive instance: instance=m5.2xlarge, cpu=18.0%, mem=22.0%, p95=140.0ms, cost=$0.384/hr, autoscaling=False (cost>budget)",
+      "trade_offs": "All passing plans treated as equally good (no utility ranking).",
+      "monitoring_plan": "Verify predicted p95/cost after the change window.",
+      "mechanism": "Goal-Based",
+      "predicted_outcome": {
+        "p95_response_ms": 116.66666666666667,
+        "availability_pct": 99.9,
+        "hourly_cost_usd": 0.3264,
+        "autoscaling_enabled": true
+      },
+      "goal_checks": [
+        "scale_up:fail",
+        "enable_autoscaling:pass",
+        "rightsize_compute:pass",
+        "scale_down:pass",
+        "keep_current:pass"
+      ],
+      "display_recommendation": "ENABLE_AUTOSCALING - Keep m5.2xlarge + autoscaling",
+      "target_instance": "m5.2xlarge"
+    },
+    {
+      "agent": "Utility-Based",
+      "recommendation": "scale_down",
+      "reasoning": "Highest weighted utility (0.828) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_down=0.828, enable_autoscaling=0.759, rightsize_compute=0.723, keep_current=0.693].",
+      "candidates": [
+        "scale_down",
+        "enable_autoscaling",
+        "rightsize_compute",
+        "keep_current"
+      ],
+      "current_state_summary": "Over-provisioned expensive instance: instance=m5.2xlarge, cpu=18.0%, mem=22.0%, p95=140.0ms, cost=$0.384/hr, autoscaling=False (cost>budget)",
+      "trade_offs": "Sidebar weights change the ranking; SLO breaches reduce performance/availability scores.",
+      "monitoring_plan": "Compare realized utility vs predicted after one billing day.",
+      "mechanism": "Utility-Based",
+      "utility_ranking": [
+        [
+          "scale_down",
+          0.828
+        ],
+        [
+          "enable_autoscaling",
+          0.7587
+        ],
+        [
+          "rightsize_compute",
+          0.7233
+        ],
+        [
+          "keep_current",
+          0.6926
+        ]
+      ],
+      "utility_weights": {
+        "cost": 0.4,
+        "performance": 0.4,
+        "availability": 0.2
+      },
+      "display_recommendation": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
+      "target_instance": "t3.medium"
+    },
+    {
+      "agent": "Learning",
+      "recommendation": "keep_current",
+      "reasoning": "Highest weighted utility (9.443) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=9.443, scale_down=4.161, enable_autoscaling=0.759, rightsize_compute=0.723]. Experience-adjusted success rates: keep_current=0.94, scale_down=0.67, enable_autoscaling=0.50, rightsize_compute=0.50.",
+      "candidates": [
+        "keep_current",
+        "scale_down",
+        "enable_autoscaling",
+        "rightsize_compute"
+      ],
+      "current_state_summary": "Over-provisioned expensive instance: instance=m5.2xlarge, cpu=18.0%, mem=22.0%, p95=140.0ms, cost=$0.384/hr, autoscaling=False (cost>budget)",
+      "trade_offs": "Improves with outcomes, but needs enough episodes and occasional exploration.",
+      "monitoring_plan": "Compare realized utility vs predicted after one billing day.",
+      "mechanism": "Learning",
+      "utility_ranking": [
+        [
+          "keep_current",
+          9.4426
+        ],
+        [
+          "scale_down",
+          4.161333333333332
+        ],
+        [
+          "enable_autoscaling",
+          0.7587
+        ],
+        [
+          "rightsize_compute",
+          0.7233
+        ]
+      ],
+      "utility_weights": {
+        "cost": 0.4,
+        "performance": 0.4,
+        "availability": 0.2
+      },
+      "learning_stats": {
+        "keep_current": {
+          "success_rate": 0.938,
+          "success": 15,
+          "failure": 1
+        },
+        "scale_up": {
+          "success_rate": 0.667,
+          "success": 2,
+          "failure": 1
+        },
+        "scale_down": {
+          "success_rate": 0.667,
+          "success": 2,
+          "failure": 1
+        },
+        "enable_autoscaling": {
+          "success_rate": 0.5,
+          "success": 1,
+          "failure": 1
+        },
+        "rightsize_compute": {
+          "success_rate": 0.5,
+          "success": 1,
+          "failure": 1
+        }
+      },
+      "limitations": "Early counts are priors; sparse feedback can bias preferences. Exploration may temporarily pick a suboptimal plan.",
+      "display_recommendation": "KEEP_CURRENT - Keep m5.2xlarge",
+      "target_instance": "m5.2xlarge"
+    },
+    {
+      "agent": "LLM (Ollama/LangChain)",
+      "recommendation": "scale_down",
+      "reasoning": "\n\nNormalized recommendation from tool evidence: scale_down.",
+      "tool_trace": [
+        {
+          "tool": "get_resource_metrics",
+          "args": {
+            "scenario_id": "B"
+          },
+          "result": {
+            "scenario_id": "B",
+            "scenario_name": "Over-provisioned expensive instance",
+            "kind": "normal",
+            "description": "CPU and memory utilization are low, but the instance is expensive.",
+            "metrics": {
+              "instance_type": "m5.2xlarge",
+              "cpu_util_pct": 18.0,
+              "memory_util_pct": 22.0,
+              "p95_response_ms": 140.0,
+              "error_rate_pct": 0.2,
+              "requests_per_min": 95.0,
+              "peak_cpu_util_pct": 28.0,
+              "offpeak_cpu_util_pct": 8.0,
+              "hourly_cost_usd": 0.384,
+              "autoscaling_enabled": false,
+              "availability_pct": 99.9
+            }
+          }
+        },
+        {
+          "tool": "get_cost_estimate",
+          "args": {
+            "instance_type": "default"
+          },
+          "result": {
+            "error": "Unknown instance_type 'default'",
+            "known_types": [
+              "c5.xlarge",
+              "m5.2xlarge",
+              "m5.large",
+              "m5.xlarge",
+              "t3.large",
+              "t3.medium"
+            ]
+          }
+        }
+      ],
+      "candidates": [
+        "scale_down"
+      ],
+      "current_state_summary": "Over-provisioned expensive instance: instance=m5.2xlarge, cpu=18.0%, mem=22.0%, p95=140.0ms, cost=$0.384/hr, autoscaling=False (cost>budget)",
+      "trade_offs": "Grounded in tool evidence; simulation only; model may mis-rank soft trade-offs.",
+      "monitoring_plan": "Track p95 latency, CPU, and hourly cost for 24h after any change.",
+      "model": "qwen3:1.7b",
+      "tools_called": [
+        "get_resource_metrics",
+        "get_cost_estimate"
+      ],
+      "display_recommendation": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
+      "target_instance": "t3.medium"
+    }
+  ],
+  "comparison": [
+    {
+      "agent": "Simple Reflex",
+      "recommendation": "scale_down",
+      "display": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
+      "reasoning": "Simple reflex: IF cpu<=25 AND cost>0.25 THEN scale_down. Observed cpu=18.0%, p95=140.0ms, cost=$0.384/hr, gap=20.0."
+    },
+    {
+      "agent": "Model-Based Reflex",
+      "recommendation": "scale_down",
+      "display": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
+      "reasoning": "Model-based reflex used internal state: sustained low util streak=1."
+    },
+    {
+      "agent": "Goal-Based",
+      "recommendation": "enable_autoscaling",
+      "display": "ENABLE_AUTOSCALING - Keep m5.2xlarge + autoscaling",
+      "reasoning": "Looked ahead over 5 actions; 4 pass the goal test. Took first passing plan (enable_autoscaling). Checks: scale_up:fail, enable_autoscaling:pass, rightsize_compute:pass, scale_down:pass, keep_current:pass."
+    },
+    {
+      "agent": "Utility-Based",
+      "recommendation": "scale_down",
+      "display": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
+      "reasoning": "Highest weighted utility (0.828) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_down=0.828, enable_autoscaling=0.759, rightsize_compute=0.723, keep_current=0.693]."
+    },
+    {
+      "agent": "Learning",
+      "recommendation": "keep_current",
+      "display": "KEEP_CURRENT - Keep m5.2xlarge",
+      "reasoning": "Highest weighted utility (9.443) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=9.443, scale_down=4.161, enable_autoscaling=0.759, rightsize_compute=0.723]. Experience-adjusted success rates: keep_current=0.94, scale_down=0.67, enable_autoscaling=0.50, rightsize_compute=0.50."
+    },
+    {
+      "agent": "LLM (Ollama/LangChain)",
+      "recommendation": "scale_down",
+      "display": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
+      "reasoning": "\n\nNormalized recommendation from tool evidence: scale_down."
+    }
+  ],
+  "why_decisions_differ": "Agents differ because each uses a different decision mechanism (rules vs state vs goal test vs utility vs learned rates vs LLM+tools). scale_down: Simple Reflex, Model-Based Reflex, Utility-Based, LLM (Ollama/LangChain) | enable_autoscaling: Goal-Based | keep_current: Learning",
+  "utility_weights": {
+    "cost": 0.4,
+    "performance": 0.4,
+    "availability": 0.2
+  }
+}
