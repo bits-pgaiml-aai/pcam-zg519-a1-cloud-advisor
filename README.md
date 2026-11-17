@@ -63,10 +63,16 @@ python -m src.cli C --no-llm
 python -m src.cli D
 ```
 
-Generate classical + LLM evidence for A/B/C/D:
+Generate classical + LLM evidence for A/B/C/D (needs Ollama):
 
 ```bash
 python scripts/generate_evidence.py
+```
+
+Rebuild docs/evidence summaries from the latest screenshot JSON (no Ollama required):
+
+```bash
+python scripts/sync_reports_from_screenshots.py
 ```
 
 ## BITS Prayogshala (recommended when local Ollama pull is blocked)
@@ -119,7 +125,7 @@ screenshots/           UI screenshots
 docs/                  Write-ups (comparison table, learning, submission pack)
 ```
 
-Key docs for graders: [`docs/comparison_table.md`](docs/comparison_table.md) · [`docs/SUBMISSION_PACK.md`](docs/SUBMISSION_PACK.md) · [`evidence/llm_live_summary.md`](evidence/llm_live_summary.md)
+Key docs for graders: [`docs/scenario_results_summary.md`](docs/scenario_results_summary.md) · [`docs/comparison_table.md`](docs/comparison_table.md) · [`docs/SUBMISSION_PACK.md`](docs/SUBMISSION_PACK.md) · [`evidence/llm_live_summary.md`](evidence/llm_live_summary.md)
 
 ## Submission checklist
 

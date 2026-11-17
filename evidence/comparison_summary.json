@@ -2,121 +2,145 @@
   {
     "scenario": "A",
     "agent": "Simple Reflex",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)"
   },
   {
     "scenario": "A",
     "agent": "Model-Based Reflex",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)"
   },
   {
     "scenario": "A",
     "agent": "Goal-Based",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)"
   },
   {
     "scenario": "A",
     "agent": "Utility-Based",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)"
   },
   {
     "scenario": "A",
     "agent": "Learning",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)"
   },
   {
     "scenario": "A",
     "agent": "LLM (Ollama/LangChain)",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)"
   },
   {
     "scenario": "B",
     "agent": "Simple Reflex",
-    "recommendation": "scale_down"
+    "recommendation": "scale_down",
+    "display": "SCALE_DOWN - Downsize to t3.medium ($30/mo)"
   },
   {
     "scenario": "B",
     "agent": "Model-Based Reflex",
-    "recommendation": "scale_down"
+    "recommendation": "scale_down",
+    "display": "SCALE_DOWN - Downsize to t3.medium ($30/mo)"
   },
   {
     "scenario": "B",
     "agent": "Goal-Based",
-    "recommendation": "enable_autoscaling"
+    "recommendation": "enable_autoscaling",
+    "display": "ENABLE_AUTOSCALING - Keep m5.2xlarge + autoscaling"
   },
   {
     "scenario": "B",
     "agent": "Utility-Based",
-    "recommendation": "scale_down"
+    "recommendation": "scale_down",
+    "display": "SCALE_DOWN - Downsize to t3.medium ($30/mo)"
   },
   {
     "scenario": "B",
     "agent": "Learning",
-    "recommendation": "keep_current"
+    "recommendation": "keep_current",
+    "display": "KEEP_CURRENT - Keep m5.2xlarge"
   },
   {
     "scenario": "B",
     "agent": "LLM (Ollama/LangChain)",
-    "recommendation": "scale_down"
+    "recommendation": "scale_down",
+    "display": "SCALE_DOWN - Downsize to t3.medium ($30/mo)"
   },
   {
     "scenario": "C",
     "agent": "Simple Reflex",
-    "recommendation": "enable_autoscaling"
+    "recommendation": "enable_autoscaling",
+    "display": "ENABLE_AUTOSCALING - Keep m5.xlarge + autoscaling"
   },
   {
     "scenario": "C",
     "agent": "Model-Based Reflex",
-    "recommendation": "enable_autoscaling"
+    "recommendation": "enable_autoscaling",
+    "display": "ENABLE_AUTOSCALING - Keep m5.xlarge + autoscaling"
   },
   {
     "scenario": "C",
     "agent": "Goal-Based",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to m5.2xlarge ($276/mo)"
   },
   {
     "scenario": "C",
     "agent": "Utility-Based",
-    "recommendation": "enable_autoscaling"
+    "recommendation": "enable_autoscaling",
+    "display": "ENABLE_AUTOSCALING - Keep m5.xlarge + autoscaling"
   },
   {
     "scenario": "C",
     "agent": "Learning",
-    "recommendation": "keep_current"
+    "recommendation": "keep_current",
+    "display": "KEEP_CURRENT - Keep m5.xlarge"
   },
   {
     "scenario": "C",
     "agent": "LLM (Ollama/LangChain)",
-    "recommendation": "keep_current"
+    "recommendation": "keep_current",
+    "display": "KEEP_CURRENT - Keep m5.xlarge"
   },
   {
     "scenario": "D",
     "agent": "Simple Reflex",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to m5.xlarge ($138/mo)"
   },
   {
     "scenario": "D",
     "agent": "Model-Based Reflex",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to m5.xlarge ($138/mo)"
   },
   {
     "scenario": "D",
     "agent": "Goal-Based",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to m5.xlarge ($138/mo)"
   },
   {
     "scenario": "D",
     "agent": "Utility-Based",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to m5.xlarge ($138/mo)"
   },
   {
     "scenario": "D",
     "agent": "Learning",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to m5.xlarge ($138/mo)"
   },
   {
     "scenario": "D",
     "agent": "LLM (Ollama/LangChain)",
-    "recommendation": "scale_up"
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to m5.xlarge ($138/mo)"
   }
 ]

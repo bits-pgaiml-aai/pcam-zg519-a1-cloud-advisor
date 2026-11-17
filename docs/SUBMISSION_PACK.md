@@ -24,6 +24,7 @@ evidence/             # scenario_*_results.json, comparison_summary.json,
 screenshots/          # scenario_*.png + scenario_*_results.json + INDEX.md
 docs/comparison_table.md
 docs/comparison_writeup.md
+docs/scenario_results_summary.md
 docs/learning_evaluation.md
 docs/learning_before_after.md
 docs/SELECTION_NOTES.md
@@ -31,15 +32,17 @@ docs/SELECTION_NOTES.md
 
 ## Pre-submit checks
 
-1. `python scripts/generate_evidence.py` with Ollama up and a tools-capable model.
-2. Confirm LLM rows are **not** labeled only as fallback (live tool-calling preferred).
-3. Screenshots cover A/B/C (D optional but included).
+1. Confirm screenshots A–D PNG + JSON are present under `screenshots/`.
+2. Run `python scripts/sync_reports_from_screenshots.py` so evidence/docs match those JSON files.
+3. Confirm LLM rows are live Ollama/LangChain with ≥2 tools (see `evidence/llm_live_summary.md`).
 4. Fill bake-off winner in `docs/SELECTION_NOTES.md`.
 5. Do not include secrets, `.venv/`, or personal PATs.
 
 ## Regenerate helper artifacts
 
 ```bash
+python scripts/sync_reports_from_screenshots.py
+# optional live re-run (needs Ollama), then sync again:
 python scripts/generate_evidence.py
-python scripts/generate_submission_artifacts.py
+python scripts/sync_reports_from_screenshots.py
 ```
