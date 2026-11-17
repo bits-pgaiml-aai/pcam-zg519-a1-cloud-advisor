@@ -1,0 +1,56 @@
+[
+  {
+    "agent": "Simple Reflex",
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
+    "reasoning": "Simple reflex: IF cpu>=85 OR p95>300 THEN scale_up. Observed cpu=92.0%, p95=520.0ms, cost=$0.096/hr, gap=8.0.",
+    "current_state_summary": "High CPU / slow responses: instance=m5.large, cpu=92.0%, mem=68.0%, p95=520.0ms, cost=$0.096/hr, autoscaling=False (latency>SLA, availability<SLA)",
+    "trade_offs": "Fast and deterministic, but ignores history, multi-objective scoring, and candidate instance catalog.",
+    "monitoring_plan": "Re-evaluate the same threshold rules next window."
+  },
+  {
+    "agent": "Model-Based Reflex",
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
+    "reasoning": "Model-based reflex used internal state: believed breach_streak=1, avg_cpu=92.0, avg_p95=520.0.",
+    "current_state_summary": "High CPU / slow responses: instance=m5.large, cpu=92.0%, mem=68.0%, p95=520.0ms, cost=$0.096/hr, autoscaling=False (latency>SLA, availability<SLA)",
+    "trade_offs": "Uses short memory of unseen trend, but still no explicit goal search or utility ranking.",
+    "monitoring_plan": "Track breach/low-util streaks across evaluation windows."
+  },
+  {
+    "agent": "Goal-Based",
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
+    "reasoning": "Looked ahead over 5 actions; 1 pass the goal test. Took first passing plan (scale_up). Checks: scale_up:pass, enable_autoscaling:fail, rightsize_compute:fail, scale_down:fail, keep_current:fail.",
+    "current_state_summary": "High CPU / slow responses: instance=m5.large, cpu=92.0%, mem=68.0%, p95=520.0ms, cost=$0.096/hr, autoscaling=False (latency>SLA, availability<SLA)",
+    "trade_offs": "All passing plans treated as equally good (no utility ranking).",
+    "monitoring_plan": "Verify predicted p95/cost after the change window."
+  },
+  {
+    "agent": "Utility-Based",
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
+    "reasoning": "Maximized expected utility among feasible plans. Ranking: [scale_up=-17.28].",
+    "current_state_summary": "High CPU / slow responses: instance=m5.large, cpu=92.0%, mem=68.0%, p95=520.0ms, cost=$0.096/hr, autoscaling=False (latency>SLA, availability<SLA)",
+    "trade_offs": "Balances latency penalty, availability gap, and hourly cost; uses advertised/static beliefs only.",
+    "monitoring_plan": "Compare realized utility vs predicted after one billing day."
+  },
+  {
+    "agent": "Learning",
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
+    "reasoning": "Maximized expected utility among feasible plans. Ranking: [scale_up=-13.95]. Experience-adjusted success rates: scale_up=0.67.",
+    "current_state_summary": "High CPU / slow responses: instance=m5.large, cpu=92.0%, mem=68.0%, p95=520.0ms, cost=$0.096/hr, autoscaling=False (latency>SLA, availability<SLA)",
+    "trade_offs": "Improves with outcomes, but needs enough episodes and occasional exploration.",
+    "monitoring_plan": "Compare realized utility vs predicted after one billing day."
+  },
+  {
+    "agent": "LLM (tool-evidence fallback)",
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
+    "reasoning": "Ollama/LangChain unavailable; used deterministic tool evidence fallback. Errors: langchain=No module named 'langchain_core'; ollama=No module named 'ollama'. Recommendation=scale_up from tools ['get_resource_metrics', 'get_cost_estimate'].",
+    "current_state_summary": "High CPU / slow responses: instance=m5.large, cpu=92.0%, mem=68.0%, p95=520.0ms, cost=$0.096/hr, autoscaling=False (latency>SLA, availability<SLA)",
+    "trade_offs": "Grounded in tool evidence; simulation only; model may mis-rank soft trade-offs.",
+    "monitoring_plan": "Track p95 latency, CPU, and hourly cost for 24h after any change."
+  }
+]
