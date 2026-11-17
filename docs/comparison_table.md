@@ -6,7 +6,7 @@ Same percept for every agent within a scenario. Differences come from mechanism.
 | --- | --- | --- | --- | --- | --- | --- |
 | A | scale_up | scale_up | scale_up | scale_up | scale_up | scale_up |
 | B | scale_down | scale_down | enable_autoscaling | scale_down | keep_current | scale_down |
-| C | enable_autoscaling | enable_autoscaling | scale_up | enable_autoscaling | keep_current | enable_autoscaling |
+| C | enable_autoscaling | enable_autoscaling | scale_up | enable_autoscaling | keep_current | keep_current |
 | D | scale_up | scale_up | scale_up | scale_up | scale_up | scale_up |
 
 ## Why decisions differ

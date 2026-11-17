@@ -286,7 +286,7 @@
     {
       "agent": "Learning",
       "recommendation": "keep_current",
-      "reasoning": "Highest weighted utility (7.815) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=7.815, scale_up=5.718, enable_autoscaling=0.820, rightsize_compute=0.762]. Experience-adjusted success rates: keep_current=0.86, scale_up=0.75, enable_autoscaling=0.50, rightsize_compute=0.50.",
+      "reasoning": "Highest weighted utility (9.496) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=9.496, scale_up=4.051, enable_autoscaling=0.820, rightsize_compute=0.762]. Experience-adjusted success rates: keep_current=0.94, scale_up=0.67, enable_autoscaling=0.50, rightsize_compute=0.50.",
       "candidates": [
         "keep_current",
         "scale_up",
@@ -300,11 +300,11 @@
       "utility_ranking": [
         [
           "keep_current",
-          7.815157142857142
+          9.495829411764706
         ],
         [
           "scale_up",
-          5.718
+          4.051333333333332
         ],
         [
           "enable_autoscaling",
@@ -322,18 +322,18 @@
       },
       "learning_stats": {
         "keep_current": {
-          "success_rate": 0.857,
-          "success": 6,
+          "success_rate": 0.941,
+          "success": 16,
           "failure": 1
         },
         "scale_up": {
-          "success_rate": 0.75,
-          "success": 3,
+          "success_rate": 0.667,
+          "success": 2,
           "failure": 1
         },
         "scale_down": {
-          "success_rate": 0.75,
-          "success": 3,
+          "success_rate": 0.667,
+          "success": 2,
           "failure": 1
         },
         "enable_autoscaling": {
@@ -353,8 +353,8 @@
     },
     {
       "agent": "LLM (Ollama/LangChain)",
-      "recommendation": "enable_autoscaling",
-      "reasoning": "Based on the analysis of scenario C, we have the following metrics:\n\n- **Instance Type**: m5.xlarge\n- **CPU Utilization**: 55.0% (peak) and 12.0% (off-peak)\n- **Memory Utilization**: 48.0% (peak) and 12.0% (off-peak)\n- **95th Percentile Response Time**: 280 ms (peak) and 300 ms (off-peak)\n- **Error Rate**: 6% (peak) and 0% (off-peak)\n- **Requests per Minute**: 260 (peak) and 260 (off-peak)\n- **Peak CPU Utilization**: 91.0% (peak) and 12.0% (off-peak)\n- **Hourly Cost**: $0.192 (peak) and $0.192 (off-peak)\n- **Autoscaling**: Disabled\n- **Availability**: 99.6% (peak) and 99.5% (off-peak)\n\nThe scenario is characterized by a sharp variation in workload, with a significant CPU utilization gap between peak and off-peak hours. The current instance type is m5.xlarge, which is not available in the scenario. The recommended scaling policy is to scale out when CPU utilization exceeds 70% and scale in when it falls below 30%. This policy is enabled and includes a cooldown period of 300 seconds, with a minimum of 1 instance and a maximum of 4 instances. The notes indicate that this is a simulated policy and no live cloud resources are changed.\n\nGiven the high CPU utilization gap and the need for a scalable solution, the recommended action is to enable autoscaling. This will help manage the workload more effectively, reducing the risk of underutilization during off-peak hours and ensuring that resources are not wasted during peak hours. The trade-off is that the hourly cost will increase slightly, but the availability and performance will improve, leading to better service levels and customer satisfaction.\n\nNormalized recommendation from tool evidence: enable_autoscaling.",
+      "recommendation": "keep_current",
+      "reasoning": "\n\nNormalized recommendation from tool evidence: keep_current.",
       "tool_trace": [
         {
           "tool": "get_resource_metrics",
@@ -384,10 +384,10 @@
         {
           "tool": "get_cost_estimate",
           "args": {
-            "instance_type": "C"
+            "instance_type": "t2.large"
           },
           "result": {
-            "error": "Unknown instance_type 'C'",
+            "error": "Unknown instance_type 't2.large'",
             "known_types": [
               "c5.xlarge",
               "m5.2xlarge",
@@ -397,53 +397,20 @@
               "t3.medium"
             ]
           }
-        },
-        {
-          "tool": "get_service_level_targets",
-          "args": {},
-          "result": {
-            "sla_targets": {
-              "p95_response_ms": 300,
-              "availability_pct": 99.5,
-              "max_hourly_cost_usd": 0.25
-            }
-          }
-        },
-        {
-          "tool": "get_scaling_policy",
-          "args": {
-            "scenario_id": "C"
-          },
-          "result": {
-            "scenario_id": "C",
-            "current_autoscaling_enabled": false,
-            "peak_offpeak_cpu_gap": 79.0,
-            "recommended_policy": {
-              "scale_out_cpu_threshold_pct": 70,
-              "scale_in_cpu_threshold_pct": 30,
-              "cooldown_seconds": 300,
-              "min_instances": 1,
-              "max_instances": 4,
-              "prefer_autoscaling": true
-            },
-            "notes": "Simulated policy only; no live cloud resources are changed."
-          }
         }
       ],
       "candidates": [
-        "enable_autoscaling"
+        "keep_current"
       ],
       "current_state_summary": "Sharp peak / off-peak variation: instance=m5.xlarge, cpu=55.0%, mem=48.0%, p95=280.0ms, cost=$0.192/hr, autoscaling=False (no hard SLA breach)",
       "trade_offs": "Grounded in tool evidence; simulation only; model may mis-rank soft trade-offs.",
       "monitoring_plan": "Track p95 latency, CPU, and hourly cost for 24h after any change.",
-      "model": "qwen2.5:1.5b-instruct",
+      "model": "qwen3:1.7b",
       "tools_called": [
         "get_resource_metrics",
-        "get_cost_estimate",
-        "get_service_level_targets",
-        "get_scaling_policy"
+        "get_cost_estimate"
       ],
-      "display_recommendation": "ENABLE_AUTOSCALING - Keep m5.xlarge + autoscaling",
+      "display_recommendation": "KEEP_CURRENT - Keep m5.xlarge",
       "target_instance": "m5.xlarge"
     }
   ],
@@ -476,16 +443,16 @@
       "agent": "Learning",
       "recommendation": "keep_current",
       "display": "KEEP_CURRENT - Keep m5.xlarge",
-      "reasoning": "Highest weighted utility (7.815) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=7.815, scale_up=5.718, enable_autoscaling=0.820, rightsize_compute=0.762]. Experience-adjusted success rates: keep_current=0.86, scale_up=0.75, enable_autoscaling=0.50, rightsize_compute=0.50."
+      "reasoning": "Highest weighted utility (9.496) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=9.496, scale_up=4.051, enable_autoscaling=0.820, rightsize_compute=0.762]. Experience-adjusted success rates: keep_current=0.94, scale_up=0.67, enable_autoscaling=0.50, rightsize_compute=0.50."
     },
     {
       "agent": "LLM (Ollama/LangChain)",
-      "recommendation": "enable_autoscaling",
-      "display": "ENABLE_AUTOSCALING - Keep m5.xlarge + autoscaling",
-      "reasoning": "Based on the analysis of scenario C, we have the following metrics:\n\n- **Instance Type**: m5.xlarge\n- **CPU Utilization**: 55.0% (peak) and 12.0% (off-peak)\n- **Memory Utilization**: 48.0% (peak) and 12.0% (off-peak)\n- **95th Percentile Response Time**: 280 ms (peak) and 300 ms (off-peak)\n- **Error Rate**: 6% (peak) and 0% (off-peak)\n- **Requests per Minute**: 260 (peak) and 260 (off-peak)\n- **Peak CPU Utilization**: 91.0% (peak) and 12.0% (off-peak)\n- **Hourly Cost**: $0.192 (peak) and $0.192 (off-peak)\n- **Autoscaling**: Disabled\n- **Availability**: 99.6% (peak) and 99.5% (off-peak)\n\nThe scenario is characterized by a sharp variation in workload, with a significant CPU utilization gap between peak and off-peak hours. The current instance type is m5.xlarge, which is not available in the scenario. The recommended scaling policy is to scale out when CPU utilization exceeds 70% and scale in when it falls below 30%. This policy is enabled and includes a cooldown period of 300 seconds, with a minimum of 1 instance and a maximum of 4 instances. The notes indicate that this is a simulated policy and no live cloud resources are changed.\n\nGiven the high CPU utilization gap and the need for a scalable solution, the recommended action is to enable autoscaling. This will help manage the workload more effectively, reducing the risk of underutilization during off-peak hours and ensuring that resources are not wasted during peak hours. The trade-off is that the hourly cost will increase slightly, but the availability and performance will improve, leading to better service levels and customer satisfaction.\n\nNormalized recommendation from tool evidence: enable_autoscaling."
+      "recommendation": "keep_current",
+      "display": "KEEP_CURRENT - Keep m5.xlarge",
+      "reasoning": "\n\nNormalized recommendation from tool evidence: keep_current."
     }
   ],
-  "why_decisions_differ": "Agents differ because each uses a different decision mechanism (rules vs state vs goal test vs utility vs learned rates vs LLM+tools). enable_autoscaling: Simple Reflex, Model-Based Reflex, Utility-Based, LLM (Ollama/LangChain) | scale_up: Goal-Based | keep_current: Learning",
+  "why_decisions_differ": "Agents differ because each uses a different decision mechanism (rules vs state vs goal test vs utility vs learned rates vs LLM+tools). enable_autoscaling: Simple Reflex, Model-Based Reflex, Utility-Based | scale_up: Goal-Based | keep_current: Learning, LLM (Ollama/LangChain)",
   "utility_weights": {
     "cost": 0.4,
     "performance": 0.4,

@@ -280,7 +280,7 @@
     {
       "agent": "Learning",
       "recommendation": "scale_up",
-      "reasoning": "Highest weighted utility (5.713) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_up=5.713, enable_autoscaling=0.685, rightsize_compute=0.665]. Experience-adjusted success rates: scale_up=0.75, enable_autoscaling=0.50, rightsize_compute=0.50.",
+      "reasoning": "Highest weighted utility (4.046) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_up=4.046, enable_autoscaling=0.685, rightsize_compute=0.665]. Experience-adjusted success rates: scale_up=0.67, enable_autoscaling=0.50, rightsize_compute=0.50.",
       "candidates": [
         "scale_up",
         "enable_autoscaling",
@@ -293,7 +293,7 @@
       "utility_ranking": [
         [
           "scale_up",
-          5.7126
+          4.045933333333332
         ],
         [
           "enable_autoscaling",
@@ -311,18 +311,18 @@
       },
       "learning_stats": {
         "keep_current": {
-          "success_rate": 0.857,
-          "success": 6,
+          "success_rate": 0.944,
+          "success": 17,
           "failure": 1
         },
         "scale_up": {
-          "success_rate": 0.75,
-          "success": 3,
+          "success_rate": 0.667,
+          "success": 2,
           "failure": 1
         },
         "scale_down": {
-          "success_rate": 0.75,
-          "success": 3,
+          "success_rate": 0.667,
+          "success": 2,
           "failure": 1
         },
         "enable_autoscaling": {
@@ -343,7 +343,7 @@
     {
       "agent": "LLM (Ollama/LangChain)",
       "recommendation": "scale_up",
-      "reasoning": "Based on the analysis of scenario D, we have the following metrics:\n- CPU utilization: 64.0%\n- Memory utilization: 71.0%\n- 95th percentile response time: 330 ms\n- Error rate: 9.0%\n- Requests per minute: 310\n- Peak CPU utilization: 84.0%\n- Off-peak CPU utilization: 35.0%\n- Hourly cost: $0.17\n- Autoscaling is enabled\n- Availability: 99.4%\n\nThe scenario is characterized by slightly high latency, near budget cost, and moderate CPU utilization with occasional spikes. The current scaling policy is enabled, but it's not recommended due to the high CPU utilization and the need for a more aggressive scaling policy.\n\nTo optimize this scenario, we can consider the following actions:\n\n1. **Scale Out CPU Threshold**: Increase the scale-out CPU threshold from 70% to 75%. This will help in reducing CPU utilization and potentially lower the peak CPU utilization, which is currently at 84%.\n2. **Scale In CPU Threshold**: Decrease the scale-in CPU threshold from 30% to 25%. This will help in reducing CPU utilization during off-peak hours, which is currently at 35%.\n\nThese changes will help in reducing CPU utilization, which is currently at 64%, and will also help in reducing the peak CPU utilization, which is currently at 84%. This should improve the performance and reduce the cost without changing any live cloud resources.\n\nTherefore, the recommended action is to **scale out CPU threshold to 75%** and **scale in CPU threshold to 25%**. This will help in optimizing the scenario without changing any live cloud resources.\n\nNormalized recommendation from tool evidence: scale_up.",
+      "reasoning": "\n\nNormalized recommendation from tool evidence: scale_up.",
       "tool_trace": [
         {
           "tool": "get_resource_metrics",
@@ -373,10 +373,10 @@
         {
           "tool": "get_cost_estimate",
           "args": {
-            "instance_type": "D"
+            "instance_type": "t2.medium"
           },
           "result": {
-            "error": "Unknown instance_type 'D'",
+            "error": "Unknown instance_type 't2.medium'",
             "known_types": [
               "c5.xlarge",
               "m5.2xlarge",
@@ -386,37 +386,6 @@
               "t3.medium"
             ]
           }
-        },
-        {
-          "tool": "get_service_level_targets",
-          "args": {},
-          "result": {
-            "sla_targets": {
-              "p95_response_ms": 300,
-              "availability_pct": 99.5,
-              "max_hourly_cost_usd": 0.25
-            }
-          }
-        },
-        {
-          "tool": "get_scaling_policy",
-          "args": {
-            "scenario_id": "D"
-          },
-          "result": {
-            "scenario_id": "D",
-            "current_autoscaling_enabled": true,
-            "peak_offpeak_cpu_gap": 49.0,
-            "recommended_policy": {
-              "scale_out_cpu_threshold_pct": 70,
-              "scale_in_cpu_threshold_pct": 30,
-              "cooldown_seconds": 300,
-              "min_instances": 1,
-              "max_instances": 4,
-              "prefer_autoscaling": false
-            },
-            "notes": "Simulated policy only; no live cloud resources are changed."
-          }
         }
       ],
       "candidates": [
@@ -425,12 +394,10 @@
       "current_state_summary": "Ambiguous mixed signals: instance=c5.xlarge, cpu=64.0%, mem=71.0%, p95=330.0ms, cost=$0.17/hr, autoscaling=True (latency>SLA, availability<SLA)",
       "trade_offs": "Grounded in tool evidence; simulation only; model may mis-rank soft trade-offs.",
       "monitoring_plan": "Track p95 latency, CPU, and hourly cost for 24h after any change.",
-      "model": "qwen2.5:1.5b-instruct",
+      "model": "qwen3:1.7b",
       "tools_called": [
         "get_resource_metrics",
-        "get_cost_estimate",
-        "get_service_level_targets",
-        "get_scaling_policy"
+        "get_cost_estimate"
       ],
       "display_recommendation": "SCALE_UP - Upsize to m5.xlarge ($138/mo)",
       "target_instance": "m5.xlarge"
@@ -465,13 +432,13 @@
       "agent": "Learning",
       "recommendation": "scale_up",
       "display": "SCALE_UP - Upsize to m5.xlarge ($138/mo)",
-      "reasoning": "Highest weighted utility (5.713) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_up=5.713, enable_autoscaling=0.685, rightsize_compute=0.665]. Experience-adjusted success rates: scale_up=0.75, enable_autoscaling=0.50, rightsize_compute=0.50."
+      "reasoning": "Highest weighted utility (4.046) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_up=4.046, enable_autoscaling=0.685, rightsize_compute=0.665]. Experience-adjusted success rates: scale_up=0.67, enable_autoscaling=0.50, rightsize_compute=0.50."
     },
     {
       "agent": "LLM (Ollama/LangChain)",
       "recommendation": "scale_up",
       "display": "SCALE_UP - Upsize to m5.xlarge ($138/mo)",
-      "reasoning": "Based on the analysis of scenario D, we have the following metrics:\n- CPU utilization: 64.0%\n- Memory utilization: 71.0%\n- 95th percentile response time: 330 ms\n- Error rate: 9.0%\n- Requests per minute: 310\n- Peak CPU utilization: 84.0%\n- Off-peak CPU utilization: 35.0%\n- Hourly cost: $0.17\n- Autoscaling is enabled\n- Availability: 99.4%\n\nThe scenario is characterized by slightly high latency, near budget cost, and moderate CPU utilization with occasional spikes. The current scaling policy is enabled, but it's not recommended due to the high CPU utilization and the need for a more aggressive scaling policy.\n\nTo optimize this scenario, we can consider the following actions:\n\n1. **Scale Out CPU Threshold**: Increase the scale-out CPU threshold from 70% to 75%. This will help in reducing CPU utilization and potentially lower the peak CPU utilization, which is currently at 84%.\n2. **Scale In CPU Threshold**: Decrease the scale-in CPU threshold from 30% to 25%. This will help in reducing CPU utilization during off-peak hours, which is currently at 35%.\n\nThese changes will help in reducing CPU utilization, which is currently at 64%, and will also help in reducing the peak CPU utilization, which is currently at 84%. This should improve the performance and reduce the cost without changing any live cloud resources.\n\nTherefore, the recommended action is to **scale out CPU threshold to 75%** and **scale in CPU threshold to 25%**. This will help in optimizing the scenario without changing any live cloud resources.\n\nNormalized recommendation from tool evidence: scale_up."
+      "reasoning": "\n\nNormalized recommendation from tool evidence: scale_up."
     }
   ],
   "why_decisions_differ": "Agents differ because each uses a different decision mechanism (rules vs state vs goal test vs utility vs learned rates vs LLM+tools). scale_up: Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, Learning, LLM (Ollama/LangChain)",

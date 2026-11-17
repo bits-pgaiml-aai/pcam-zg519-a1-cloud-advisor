@@ -20,4 +20,4 @@ Rubric max = 20. Scores below are for the **repo-root Venkat implementation** (r
 - Why decisions differ: [`comparison_writeup.md`](comparison_writeup.md)
 - Learning before/after: [`learning_before_after.md`](learning_before_after.md)
 - Live LLM tool calls: `evidence/scenario_*_results.json` (agent `LLM (Ollama/LangChain)`)
-- Screenshots: `screenshots/` (+ [`../screenshots/INDEX.md`](../screenshots/INDEX.md))
+- Screenshots: `screenshots/scenario_{A–D}.png` (+ matching `scenario_*_results.json`, [`../screenshots/INDEX.md`](../screenshots/INDEX.md))

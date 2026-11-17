@@ -87,7 +87,7 @@
   {
     "scenario": "C",
     "agent": "LLM (Ollama/LangChain)",
-    "recommendation": "enable_autoscaling"
+    "recommendation": "keep_current"
   },
   {
     "scenario": "D",

@@ -21,7 +21,7 @@ src/                  # agents, tools, llm_agent, world, runner
 data/learning_history.json
 evidence/             # scenario_*_results.json, comparison_summary.json,
                       # learning_before_after.json
-screenshots/          # PDFs + PNGs + INDEX.md
+screenshots/          # scenario_*.png + scenario_*_results.json + INDEX.md
 docs/comparison_table.md
 docs/comparison_writeup.md
 docs/learning_evaluation.md

@@ -286,7 +286,7 @@
     {
       "agent": "Learning",
       "recommendation": "keep_current",
-      "reasoning": "Highest weighted utility (7.835) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=7.835, scale_down=5.828, enable_autoscaling=0.759, rightsize_compute=0.723]. Experience-adjusted success rates: keep_current=0.86, scale_down=0.75, enable_autoscaling=0.50, rightsize_compute=0.50.",
+      "reasoning": "Highest weighted utility (9.443) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=9.443, scale_down=4.161, enable_autoscaling=0.759, rightsize_compute=0.723]. Experience-adjusted success rates: keep_current=0.94, scale_down=0.67, enable_autoscaling=0.50, rightsize_compute=0.50.",
       "candidates": [
         "keep_current",
         "scale_down",
@@ -300,11 +300,11 @@
       "utility_ranking": [
         [
           "keep_current",
-          7.835457142857142
+          9.4426
         ],
         [
           "scale_down",
-          5.828
+          4.161333333333332
         ],
         [
           "enable_autoscaling",
@@ -322,18 +322,18 @@
       },
       "learning_stats": {
         "keep_current": {
-          "success_rate": 0.857,
-          "success": 6,
+          "success_rate": 0.938,
+          "success": 15,
           "failure": 1
         },
         "scale_up": {
-          "success_rate": 0.75,
-          "success": 3,
+          "success_rate": 0.667,
+          "success": 2,
           "failure": 1
         },
         "scale_down": {
-          "success_rate": 0.75,
-          "success": 3,
+          "success_rate": 0.667,
+          "success": 2,
           "failure": 1
         },
         "enable_autoscaling": {
@@ -354,7 +354,7 @@
     {
       "agent": "LLM (Ollama/LangChain)",
       "recommendation": "scale_down",
-      "reasoning": "Based on the analysis of scenario B, we have the following metrics:\n\n- **CPU Utilization**: 18.0% (low)\n- **Memory Utilization**: 22.0% (low)\n- **95th Percentile Response Time**: 140 ms (acceptable)\n- **Error Rate**: 2% (acceptable)\n- **Requests per Minute**: 95 per minute (acceptable)\n- **Peak CPU Utilization**: 28% (acceptable)\n- **Offpeak CPU Utilization**: 8% (acceptable)\n- **Hourly Cost**: $0.384 (expensive)\n- **Autoscaling Enabled**: False\n- **Availability**: 99.9% (high)\n\nThe scenario is over-provisioned with expensive instance type `m5.2xlarge`. The CPU and memory utilization are low, indicating that the instance is not being fully utilized. The 95th percentile response time is acceptable, and the error rate is low, suggesting that the instance is performing well under load. However, the high hourly cost of $0.384 per hour is a significant concern.\n\nGiven the high cost and the low utilization, the recommended action is to **rightsize the compute resources**. This means reducing the instance type to a more cost-effective option, such as `m5.large` or `t3.large`, which would likely result in a significant reduction in hourly cost while maintaining acceptable performance metrics.\n\nThis action would not change any live cloud resources but would optimize the cost while maintaining acceptable performance. The trade-off is a reduction in cost, which is the primary concern in this scenario.\n\nNormalized recommendation from tool evidence: scale_down.",
+      "reasoning": "\n\nNormalized recommendation from tool evidence: scale_down.",
       "tool_trace": [
         {
           "tool": "get_resource_metrics",
@@ -384,10 +384,10 @@
         {
           "tool": "get_cost_estimate",
           "args": {
-            "instance_type": "B"
+            "instance_type": "default"
           },
           "result": {
-            "error": "Unknown instance_type 'B'",
+            "error": "Unknown instance_type 'default'",
             "known_types": [
               "c5.xlarge",
               "m5.2xlarge",
@@ -397,37 +397,6 @@
               "t3.medium"
             ]
           }
-        },
-        {
-          "tool": "get_service_level_targets",
-          "args": {},
-          "result": {
-            "sla_targets": {
-              "p95_response_ms": 300,
-              "availability_pct": 99.5,
-              "max_hourly_cost_usd": 0.25
-            }
-          }
-        },
-        {
-          "tool": "get_scaling_policy",
-          "args": {
-            "scenario_id": "B"
-          },
-          "result": {
-            "scenario_id": "B",
-            "current_autoscaling_enabled": false,
-            "peak_offpeak_cpu_gap": 20.0,
-            "recommended_policy": {
-              "scale_out_cpu_threshold_pct": 70,
-              "scale_in_cpu_threshold_pct": 30,
-              "cooldown_seconds": 300,
-              "min_instances": 1,
-              "max_instances": 2,
-              "prefer_autoscaling": false
-            },
-            "notes": "Simulated policy only; no live cloud resources are changed."
-          }
         }
       ],
       "candidates": [
@@ -436,12 +405,10 @@
       "current_state_summary": "Over-provisioned expensive instance: instance=m5.2xlarge, cpu=18.0%, mem=22.0%, p95=140.0ms, cost=$0.384/hr, autoscaling=False (cost>budget)",
       "trade_offs": "Grounded in tool evidence; simulation only; model may mis-rank soft trade-offs.",
       "monitoring_plan": "Track p95 latency, CPU, and hourly cost for 24h after any change.",
-      "model": "qwen2.5:1.5b-instruct",
+      "model": "qwen3:1.7b",
       "tools_called": [
         "get_resource_metrics",
-        "get_cost_estimate",
-        "get_service_level_targets",
-        "get_scaling_policy"
+        "get_cost_estimate"
       ],
       "display_recommendation": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
       "target_instance": "t3.medium"
@@ -476,13 +443,13 @@
       "agent": "Learning",
       "recommendation": "keep_current",
       "display": "KEEP_CURRENT - Keep m5.2xlarge",
-      "reasoning": "Highest weighted utility (7.835) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=7.835, scale_down=5.828, enable_autoscaling=0.759, rightsize_compute=0.723]. Experience-adjusted success rates: keep_current=0.86, scale_down=0.75, enable_autoscaling=0.50, rightsize_compute=0.50."
+      "reasoning": "Highest weighted utility (9.443) using cost=0.40, performance=0.40, availability=0.20. Ranking: [keep_current=9.443, scale_down=4.161, enable_autoscaling=0.759, rightsize_compute=0.723]. Experience-adjusted success rates: keep_current=0.94, scale_down=0.67, enable_autoscaling=0.50, rightsize_compute=0.50."
     },
     {
       "agent": "LLM (Ollama/LangChain)",
       "recommendation": "scale_down",
       "display": "SCALE_DOWN - Downsize to t3.medium ($30/mo)",
-      "reasoning": "Based on the analysis of scenario B, we have the following metrics:\n\n- **CPU Utilization**: 18.0% (low)\n- **Memory Utilization**: 22.0% (low)\n- **95th Percentile Response Time**: 140 ms (acceptable)\n- **Error Rate**: 2% (acceptable)\n- **Requests per Minute**: 95 per minute (acceptable)\n- **Peak CPU Utilization**: 28% (acceptable)\n- **Offpeak CPU Utilization**: 8% (acceptable)\n- **Hourly Cost**: $0.384 (expensive)\n- **Autoscaling Enabled**: False\n- **Availability**: 99.9% (high)\n\nThe scenario is over-provisioned with expensive instance type `m5.2xlarge`. The CPU and memory utilization are low, indicating that the instance is not being fully utilized. The 95th percentile response time is acceptable, and the error rate is low, suggesting that the instance is performing well under load. However, the high hourly cost of $0.384 per hour is a significant concern.\n\nGiven the high cost and the low utilization, the recommended action is to **rightsize the compute resources**. This means reducing the instance type to a more cost-effective option, such as `m5.large` or `t3.large`, which would likely result in a significant reduction in hourly cost while maintaining acceptable performance metrics.\n\nThis action would not change any live cloud resources but would optimize the cost while maintaining acceptable performance. The trade-off is a reduction in cost, which is the primary concern in this scenario.\n\nNormalized recommendation from tool evidence: scale_down."
+      "reasoning": "\n\nNormalized recommendation from tool evidence: scale_down."
     }
   ],
   "why_decisions_differ": "Agents differ because each uses a different decision mechanism (rules vs state vs goal test vs utility vs learned rates vs LLM+tools). scale_down: Simple Reflex, Model-Based Reflex, Utility-Based, LLM (Ollama/LangChain) | enable_autoscaling: Goal-Based | keep_current: Learning",
