@@ -39,24 +39,25 @@ ollama serve &
 sleep 3
 curl -s http://127.0.0.1:11434/
 
-# 4) Pull a tool-capable small model (prefer small if GPU/RAM limited)
-ollama pull qwen2.5:1.5b-instruct
-# If registry allows qwen3:
-# ollama pull qwen3:latest
+# 4) Pull qwen3 (already done on many lab VMs)
+ollama pull qwen3:latest
+# lighter options: qwen3:1.7b  or  qwen3:4b
 
 # 5) Python env + app
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 export OLLAMA_HOST=http://127.0.0.1:11434
-export OLLAMA_MODEL=qwen2.5:1.5b-instruct
+export OLLAMA_MODEL=qwen3:latest
 streamlit run app.py --server.port 8501
 ```
 
-Or use the helper:
+Or use the helper (defaults to installed `qwen3:*`, else pulls `qwen3:latest`):
 
 ```bash
 bash scripts/prayogshala_bootstrap.sh
+# optional overrides:
+# OLLAMA_MODEL=qwen3:1.7b STREAMLIT_PORT=8502 bash scripts/prayogshala_bootstrap.sh
 ```
 
 ## Windows VM
@@ -82,16 +83,25 @@ streamlit run app.py --server.port 8501
 
 ## Streamlit sidebar settings
 
-- **Model:** `qwen2.5:1.5b-instruct` (or `qwen3:latest` if pull succeeded)
+- **Model:** `qwen3:latest` (or `qwen3:1.7b` / `qwen3:4b` if the 8b model is slow)
 - **Host:** `http://127.0.0.1:11434`
 - **Include LLM agent:** checked
 - Run scenarios **A, B, C, D** and save screenshots under `screenshots/` in Workspace/D:
 
+## If port 8501 is not available
+
+Another Streamlit session is probably still running:
+
+```bash
+pkill -f "streamlit run app.py" || true
+# or use another port:
+STREAMLIT_PORT=8502 bash scripts/prayogshala_bootstrap.sh
+```
+
 ## If Ollama pull still fails on Prayogshala
 
-1. Retry `ollama pull qwen2.5:1.5b-instruct`.
-2. Try a smaller model: `ollama pull qwen2.5:0.5b` (weaker tools; still better than blocked local).
-3. Classical agents + mock tools still run without Ollama; LLM path will use tool-evidence fallback. For full marks, keep trying until Ollama pull works on the lab VM.
+1. Prefer an already-listed model: `ollama list` then `OLLAMA_MODEL=qwen3:1.7b bash scripts/prayogshala_bootstrap.sh`
+2. Classical agents + mock tools still run without Ollama; LLM path will use tool-evidence fallback. For full marks, use a pulled qwen3 model.
 
 ## Before you disconnect
 
