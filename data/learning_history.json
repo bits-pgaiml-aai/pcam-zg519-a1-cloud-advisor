@@ -1,7 +1,7 @@
 {
   "action_stats": {
     "keep_current": {
-      "success": 16,
+      "success": 17,
       "failure": 1
     },
     "scale_up": {
@@ -123,6 +123,12 @@
       "action": "keep_current",
       "success": true,
       "notes": "Feedback for scenario B"
+    },
+    {
+      "scenario_id": "C",
+      "action": "keep_current",
+      "success": true,
+      "notes": "Feedback for scenario C"
     }
   ]
 }
