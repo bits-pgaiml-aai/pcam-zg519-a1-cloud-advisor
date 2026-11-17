@@ -21,6 +21,9 @@ utility' = utility + 20 * (success_rate(action) - 0.5)
 4. Re-run the same scenario and show that ranking / choice can shift.
 5. Acknowledge limitations shown in the UI warning.
 
+Recorded demo (scenario D): [`learning_before_after.md`](learning_before_after.md)  
+and [`../evidence/learning_before_after.json`](../evidence/learning_before_after.json).
+
 ## Limitations
 
 - Priors start at 1/1 (50%); early episodes dominate.

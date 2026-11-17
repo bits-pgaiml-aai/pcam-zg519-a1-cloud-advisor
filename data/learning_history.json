@@ -5,11 +5,11 @@
       "failure": 1
     },
     "scale_up": {
-      "success": 2,
+      "success": 3,
       "failure": 1
     },
     "scale_down": {
-      "success": 2,
+      "success": 3,
       "failure": 1
     },
     "enable_autoscaling": {
@@ -63,6 +63,18 @@
       "action": "keep_current",
       "success": true,
       "notes": "Feedback for scenario D"
+    },
+    {
+      "scenario_id": "A",
+      "action": "scale_up",
+      "success": true,
+      "notes": "seed success for scale_up"
+    },
+    {
+      "scenario_id": "B",
+      "action": "scale_down",
+      "success": true,
+      "notes": "seed success for scale_down"
     }
   ]
 }

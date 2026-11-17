@@ -37,14 +37,15 @@ pip install -r requirements.txt
 
 # Ollama must be running for the LLM agent
 ollama serve
-ollama pull qwen3:latest
+ollama pull qwen2.5:1.5b-instruct
+# or: ollama pull qwen3:latest
 ```
 
 Optional overrides:
 
 ```bash
-set OLLAMA_MODEL=qwen3:latest
-set OLLAMA_HOST=http://localhost:11434
+set OLLAMA_MODEL=qwen2.5:1.5b-instruct
+set OLLAMA_HOST=http://127.0.0.1:11434
 ```
 
 ## Run Streamlit UI
@@ -115,19 +116,26 @@ scripts/               Evidence helpers
 data/learning_history.json
 evidence/              Test result dumps
 screenshots/           UI screenshots
-docs/                  Write-ups
+docs/                  Write-ups (comparison table, learning, submission pack)
 ```
+
+Key docs for graders: [`docs/comparison_table.md`](docs/comparison_table.md) · [`docs/SUBMISSION_PACK.md`](docs/SUBMISSION_PACK.md) · [`evidence/llm_live_summary.md`](evidence/llm_live_summary.md)
 
 ## Submission checklist
 
 - [x] Five classical agents
-- [x] LLM agent with ≥2 tools
+- [x] LLM agent with ≥2 tools (live Ollama/LangChain evidence in `evidence/`)
 - [x] Shared scenarios A–D (includes edge)
 - [x] Streamlit comparison UI
-- [x] Learning agent experience updates
+- [x] Learning agent experience updates (+ before/after demo)
 - [x] README + setup instructions
-- [ ] Screenshots (capture from Streamlit before submit)
-- [ ] Group bake-off selection recorded in `docs/SELECTION_NOTES.md`
+- [x] Screenshots (`screenshots/` + INDEX)
+- [x] Comparison table (`docs/comparison_table.md`)
+- [x] Test results (`evidence/scenario_*_results.json`)
+- [x] Selection notes drafted (`docs/SELECTION_NOTES.md`) — confirm group winner before Moodle upload
+- [ ] Moodle/LMS upload of submission pack (see `docs/SUBMISSION_PACK.md`)
+
+No video is required for this assignment.
 
 ## Disclaimer
 

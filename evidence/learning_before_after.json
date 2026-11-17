@@ -1,0 +1,70 @@
+{
+  "scenario_id": "D",
+  "scenario_name": "Ambiguous mixed signals",
+  "before": {
+    "recommendation": "scale_up",
+    "display": "SCALE_UP - Upsize to m5.xlarge ($138/mo)",
+    "reasoning": "Highest weighted utility (0.713) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_up=0.713, enable_autoscaling=0.685, rightsize_compute=0.665]. Experience-adjusted success rates: scale_up=0.50, enable_autoscaling=0.50, rightsize_compute=0.50.",
+    "success_rates": {
+      "keep_current": 0.5,
+      "scale_up": 0.5,
+      "scale_down": 0.5,
+      "enable_autoscaling": 0.5,
+      "rightsize_compute": 0.5
+    },
+    "utility_ranking": [
+      [
+        "scale_up",
+        0.7126
+      ],
+      [
+        "enable_autoscaling",
+        0.685
+      ],
+      [
+        "rightsize_compute",
+        0.6648
+      ]
+    ]
+  },
+  "feedback_applied": [
+    {
+      "action": "scale_up",
+      "success": false,
+      "count": 1
+    },
+    {
+      "action": "rightsize_compute",
+      "success": true,
+      "count": 4
+    }
+  ],
+  "after": {
+    "recommendation": "rightsize_compute",
+    "display": "RIGHTSIZE_COMPUTE - Move toward m5.large",
+    "reasoning": "Highest weighted utility (7.331) using cost=0.40, performance=0.40, availability=0.20. Ranking: [rightsize_compute=7.331, enable_autoscaling=0.685, scale_up=-2.621]. Experience-adjusted success rates: rightsize_compute=0.83, enable_autoscaling=0.50, scale_up=0.33.",
+    "success_rates": {
+      "keep_current": 0.5,
+      "scale_up": 0.333,
+      "scale_down": 0.5,
+      "enable_autoscaling": 0.5,
+      "rightsize_compute": 0.833
+    },
+    "utility_ranking": [
+      [
+        "rightsize_compute",
+        7.3314666666666675
+      ],
+      [
+        "enable_autoscaling",
+        0.685
+      ],
+      [
+        "scale_up",
+        -2.620733333333334
+      ]
+    ]
+  },
+  "changed": true,
+  "limitations": "Early counts are priors; sparse feedback can bias preferences. Exploration may temporarily pick a suboptimal plan."
+}

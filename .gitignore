@@ -33,3 +33,4 @@ Thumbs.db
 *.tmp
 
 data/learning_history.json.bak
+submission_*.zip
