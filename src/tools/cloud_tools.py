@@ -71,7 +71,11 @@ def get_scaling_policy(scenario_id: str) -> dict[str, Any]:
             "max_instances": 4 if peak_gap >= 40 else 2,
             "prefer_autoscaling": peak_gap >= 40 and not m["autoscaling_enabled"],
         },
-        "notes": "Simulated policy only; no live cloud resources are changed.",
+        "notes": (
+            "Simulated policy only; no live cloud resources are changed. "
+            "Hold sizing decisions when memory telemetry is missing."
+        ),
+        "missing_memory_telemetry": m["memory_util_pct"] < 0,
     }
 
 

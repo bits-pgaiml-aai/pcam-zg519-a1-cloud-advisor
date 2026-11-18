@@ -48,8 +48,22 @@ class ModelBasedReflexAgent(SimpleReflexAgent):
         avg_cpu = sum(self.state["recent_cpu"]) / len(self.state["recent_cpu"])
         avg_p95 = sum(self.state["recent_p95"]) / len(self.state["recent_p95"])
         peak_gap = m["peak_cpu_util_pct"] - m["offpeak_cpu_util_pct"]
+        series_cpu = (percept.get("timeseries") or {}).get("cpu_pct") or []
+        prior_cpu = series_cpu[-6:-1] if len(series_cpu) >= 2 else self.state["recent_cpu"][:-1]
+        transient_spike = (
+            len(prior_cpu) >= 1
+            and all(c < 50 for c in prior_cpu)
+            and m["cpu_util_pct"] >= 80
+        )
 
-        if self.state["breach_streak"] >= 1 and (
+        if m["memory_util_pct"] < 0:
+            action = "keep_current"
+            why = (
+                f"missing memory sensor (mem={m['memory_util_pct']}); "
+                f"hold sizing until telemetry recovers"
+                + ("; recent CPU looks like a single-point spike" if transient_spike else "")
+            )
+        elif self.state["breach_streak"] >= 1 and (
             avg_cpu >= 75 or avg_p95 > sla["p95_response_ms"]
         ):
             action = "scale_up"
@@ -76,9 +90,12 @@ class ModelBasedReflexAgent(SimpleReflexAgent):
             reasoning=f"Model-based reflex used internal state: {why}.",
             candidates=[action],
             trade_offs=(
-                "Uses short memory of unseen trend, but still no explicit goal search "
-                "or utility ranking."
+                "Handles missing sensors and transient spikes via internal state, "
+                "but still no explicit goal search or utility ranking."
             ),
-            monitoring_plan="Track breach/low-util streaks across evaluation windows.",
+            monitoring_plan=(
+                "Repair memory telemetry first if missing; otherwise track "
+                "breach/low-util streaks across evaluation windows."
+            ),
             extras={"internal_state": dict(self.state)},
         )

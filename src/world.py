@@ -92,24 +92,24 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     },
     "D": {
         "id": "D",
-        "name": "Ambiguous mixed signals",
+        "name": "Brief spike + missing memory telemetry",
         "kind": "edge",
         "description": (
-            "Latency is slightly high, cost is near budget, and CPU is moderate "
-            "with intermittent spikes."
+            "Sudden short-lived CPU spike, response time sits on the SLA boundary, "
+            "and memory telemetry is missing (-1 sensor glitch)."
         ),
         "metrics": {
-            "instance_type": "c5.xlarge",
-            "cpu_util_pct": 64.0,
-            "memory_util_pct": 71.0,
-            "p95_response_ms": 330.0,
-            "error_rate_pct": 0.9,
-            "requests_per_min": 310.0,
-            "peak_cpu_util_pct": 84.0,
+            "instance_type": "m5.large",
+            "cpu_util_pct": 86.0,
+            "memory_util_pct": -1.0,
+            "p95_response_ms": 300.0,
+            "error_rate_pct": 0.4,
+            "requests_per_min": 210.0,
+            "peak_cpu_util_pct": 86.0,
             "offpeak_cpu_util_pct": 35.0,
-            "hourly_cost_usd": 0.170,
-            "autoscaling_enabled": True,
-            "availability_pct": 99.4,
+            "hourly_cost_usd": 0.096,
+            "autoscaling_enabled": False,
+            "availability_pct": 99.5,
         },
     },
 }
@@ -160,6 +160,12 @@ def candidate_configs(current_instance: str) -> list[dict[str, Any]]:
     return configs
 
 
+def format_memory_pct(memory_util_pct: float) -> str:
+    if memory_util_pct < 0:
+        return "MISSING"
+    return f"{memory_util_pct}%"
+
+
 def summarize_state(percept: dict[str, Any]) -> str:
     m = percept["metrics"]
     sla = percept["sla"]
@@ -170,10 +176,12 @@ def summarize_state(percept: dict[str, Any]) -> str:
         breaches.append("availability<SLA")
     if m["hourly_cost_usd"] > sla["max_hourly_cost_usd"]:
         breaches.append("cost>budget")
+    if m["memory_util_pct"] < 0:
+        breaches.append("memory_telemetry_missing")
     breach_txt = ", ".join(breaches) if breaches else "no hard SLA breach"
     return (
         f"{percept['scenario_name']}: instance={m['instance_type']}, "
-        f"cpu={m['cpu_util_pct']}%, mem={m['memory_util_pct']}%, "
+        f"cpu={m['cpu_util_pct']}%, mem={format_memory_pct(m['memory_util_pct'])}, "
         f"p95={m['p95_response_ms']}ms, cost=${m['hourly_cost_usd']}/hr, "
         f"autoscaling={m['autoscaling_enabled']} ({breach_txt})"
     )
@@ -219,6 +227,7 @@ class CloudWorld:
                 "instance": metrics["instance_type"],
                 "monthly_cost_usd": estimate_monthly_cost(metrics["hourly_cost_usd"]),
                 "cpu_now_pct": metrics["cpu_util_pct"],
+                "memory_now_pct": metrics["memory_util_pct"],
                 "cpu_avg_6h_pct": round(sum(recent) / len(recent), 1),
                 "cpu_limit_pct": 80.0,
                 "response_now_ms": round(series["response_ms"][-1], 1),
