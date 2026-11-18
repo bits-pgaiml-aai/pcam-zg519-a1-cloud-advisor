@@ -64,6 +64,7 @@ def run_all_agents(
             "recommendation": r.get("recommendation"),
             "display": r.get("display_recommendation"),
             "reasoning": r.get("reasoning"),
+            "trade_offs": r.get("trade_offs"),
         }
         for r in results
     ]

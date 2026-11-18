@@ -63,6 +63,7 @@ def format_recommendation(percept: dict[str, Any], action: str) -> str:
 def enrich_result(percept: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
     action = result.get("recommendation", "keep_current")
     enriched = dict(result)
-    enriched["display_recommendation"] = format_recommendation(percept, action)
+    if not enriched.get("display_recommendation"):
+        enriched["display_recommendation"] = format_recommendation(percept, action)
     enriched["target_instance"] = pick_target_instance(percept, action)
     return enriched

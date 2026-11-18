@@ -8,7 +8,7 @@ import streamlit as st
 
 from src.agents.learning import LearningAgent
 from src.runner import run_all_agents, simulate_learning_feedback
-from src.world import CloudWorld
+from src.world import CloudWorld, format_memory_pct
 
 st.set_page_config(
     page_title="Cloud Resource and Cost Optimization Advisor",
@@ -52,7 +52,7 @@ series = percept["timeseries"]
 
 st.markdown(f"### Scenario {scenario_id}: {scenario['description']}")
 
-m1, m2, m3, m4, m5 = st.columns(5)
+m1, m2, m3, m4, m5, m6 = st.columns(6)
 m1.metric("Instance", kpis["instance"])
 m2.metric("Monthly cost", f"${kpis['monthly_cost_usd']:.0f}")
 m3.metric(
@@ -60,12 +60,13 @@ m3.metric(
     f"{kpis['cpu_now_pct']:.1f}%",
     help=f"avg {kpis['cpu_avg_6h_pct']}% | limit {kpis['cpu_limit_pct']}%",
 )
-m4.metric(
+m4.metric("Memory", format_memory_pct(kpis["memory_now_pct"]))
+m5.metric(
     "Response now",
     f"{kpis['response_now_ms']:.0f} ms",
     help=f"p95 {kpis['p95_response_ms']} | target {kpis['response_target_ms']}",
 )
-m5.metric(
+m6.metric(
     "Availability",
     f"{kpis['availability_pct']:.2f}%",
     help=f"target {kpis['availability_target_pct']}%",
@@ -117,9 +118,18 @@ if run_clicked:
 if "last_run" in st.session_state:
     payload = st.session_state.last_run
     st.divider()
-    st.subheader("Agent decisions")
+    st.subheader("1. Side-by-side agent comparison")
     st.dataframe(
-        pd.DataFrame(payload["comparison"])[["agent", "display", "recommendation"]],
+        pd.DataFrame(payload["comparison"])[
+            ["agent", "display", "reasoning", "trade_offs"]
+        ].rename(
+            columns={
+                "agent": "Agent Type",
+                "display": "Recommended Decision",
+                "reasoning": "Primary Reasoning",
+                "trade_offs": "Key Trade-Off / Limitation",
+            }
+        ),
         use_container_width=True,
         hide_index=True,
     )
@@ -127,7 +137,7 @@ if "last_run" in st.session_state:
 
     for result in payload["results"]:
         title = result.get("display_recommendation") or result.get("recommendation")
-        with st.expander(f"{result['agent']}: {title}", expanded=True):
+        with st.expander(f"{result['agent']}: {title}", expanded=False):
             st.markdown(f"**Current state:** {result.get('current_state_summary', '')}")
             st.markdown(f"**Reasoning:** {result.get('reasoning', '')}")
             st.markdown(f"**Trade-offs:** {result.get('trade_offs', '')}")
@@ -147,36 +157,67 @@ if "last_run" in st.session_state:
             if result.get("tool_trace"):
                 st.markdown("**Tool evidence**")
                 st.json(result["tool_trace"])
+            if result.get("full_report"):
+                st.markdown("**Structured advisory report**")
+                st.markdown(result["full_report"])
             if result.get("limitations"):
                 st.warning(result["limitations"])
 
+    learning_result = next(
+        (r for r in payload["results"] if str(r.get("agent", "")).lower().startswith("learning")),
+        None,
+    )
+    learning_action = (
+        learning_result.get("recommendation", "keep_current")
+        if learning_result
+        else "keep_current"
+    )
+
     st.divider()
-    st.subheader("Update Learning Agent experience")
-    lc1, lc2, lc3 = st.columns([2, 1, 2])
-    with lc1:
-        action = st.selectbox(
-            "Action outcome to record",
-            [
-                "keep_current",
-                "scale_up",
-                "scale_down",
-                "enable_autoscaling",
-                "rightsize_compute",
-            ],
-        )
-    with lc2:
-        success = st.checkbox("Mark as success", value=True)
-    with lc3:
-        notes = st.text_input("Notes", value=f"Feedback for scenario {scenario_id}")
-    if st.button("Record learning outcome"):
-        update = simulate_learning_feedback(
-            st.session_state.learning_agent,
-            scenario_id,
-            action,
-            success,
-            notes,
-        )
-        st.success(update)
+    st.subheader("2. Learning agent experience (live update)")
+    col_l1, col_l2 = st.columns([2, 1])
+    with col_l1:
+        if learning_result and learning_result.get("learning_stats"):
+            st.json(learning_result["learning_stats"])
+        else:
+            st.json(st.session_state.learning_agent.history.get("action_stats", {}))
+        st.caption(f"Current learning recommendation to score: `{learning_action}`")
+    with col_l2:
+        st.write("Simulate real-world deployment outcome for this recommendation:")
+        if st.button("Record Success (+1)"):
+            update = simulate_learning_feedback(
+                st.session_state.learning_agent,
+                payload["scenario"]["id"],
+                learning_action,
+                True,
+                f"Success feedback for scenario {payload['scenario']['id']}",
+            )
+            st.success(update)
+            st.rerun()
+        if st.button("Record Failure (+1)"):
+            update = simulate_learning_feedback(
+                st.session_state.learning_agent,
+                payload["scenario"]["id"],
+                learning_action,
+                False,
+                f"Failure feedback for scenario {payload['scenario']['id']}",
+            )
+            st.success(update)
+            st.rerun()
+
+    llm_result = next((r for r in payload["results"] if r.get("full_report")), None)
+    if llm_result:
+        st.divider()
+        st.subheader("3. LLM agent tool calls and full advisory report")
+        with st.expander("Inspect tool calls and returned evidence", expanded=True):
+            if llm_result.get("tool_trace"):
+                for idx, t in enumerate(llm_result["tool_trace"], 1):
+                    st.markdown(f"**Tool #{idx}: `{t['tool']}`**")
+                    st.code(json.dumps(t.get("result"), indent=2, default=str), language="json")
+            else:
+                st.warning("No tools were invoked.")
+        st.markdown("### Structured cloud advisory output")
+        st.markdown(llm_result["full_report"])
 
     st.download_button(
         "Download run JSON",
