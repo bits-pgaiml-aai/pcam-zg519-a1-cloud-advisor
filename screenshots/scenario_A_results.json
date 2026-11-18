@@ -162,6 +162,7 @@
       "instance": "m5.large",
       "monthly_cost_usd": 69.12,
       "cpu_now_pct": 92.0,
+      "memory_now_pct": 68.0,
       "cpu_avg_6h_pct": 94.0,
       "cpu_limit_pct": 80.0,
       "response_now_ms": 597.8,
@@ -194,8 +195,8 @@
         "scale_up"
       ],
       "current_state_summary": "High CPU / slow responses: instance=m5.large, cpu=92.0%, mem=68.0%, p95=520.0ms, cost=$0.096/hr, autoscaling=False (latency>SLA, availability<SLA)",
-      "trade_offs": "Uses short memory of unseen trend, but still no explicit goal search or utility ranking.",
-      "monitoring_plan": "Track breach/low-util streaks across evaluation windows.",
+      "trade_offs": "Handles missing sensors and transient spikes via internal state, but still no explicit goal search or utility ranking.",
+      "monitoring_plan": "Repair memory telemetry first if missing; otherwise track breach/low-util streaks across evaluation windows.",
       "mechanism": "Model-Based Reflex",
       "internal_state": {
         "recent_cpu": [
@@ -289,8 +290,8 @@
       },
       "learning_stats": {
         "keep_current": {
-          "success_rate": 0.929,
-          "success": 13,
+          "success_rate": 0.95,
+          "success": 19,
           "failure": 1
         },
         "scale_up": {
@@ -321,7 +322,9 @@
     {
       "agent": "LLM (Ollama/LangChain)",
       "recommendation": "scale_up",
-      "reasoning": "\n\nNormalized recommendation from tool evidence: scale_up.",
+      "display_recommendation": "Scale Up** to m5.2xlarge to address high CPU utilization and slow responses while maintaining cost efficiency. This bala",
+      "reasoning": "Called 2 tools: get_resource_metrics, get_cost_estimate.",
+      "full_report": "### 1. Current-State Summary  \nThe resource (m5.large) is under high CPU utilization (92%) and slow response times (520ms), with peak CPU usage reaching 96%. The instance type is unknown (error in cost estimate), and autoscaling is disabled. The hourly cost is $0.096, but performance is suboptimal.  \n\n### 2. Candidate Configurations  \n- **Scale Up**: Transition to m5.2xlarge (known type) to increase CPU capacity and reduce utilization.  \n- **Rightsize Compute**: Adjust to a smaller, more efficient instance type (e.g., m5.xlarge) if load decreases.  \n- **Scale Down**: Reduce to m5.xlarge if load is low and performance is acceptable.  \n- **Enable Autoscaling**: Configure to scale based on CPU usage (if feasible).  \n\n### 3. Estimated Cost/Performance Trade-offs  \n- **Scale Up**:  \n  - **Cost**: Higher hourly cost (e.g., $0.12\u2013$0.15) but reduces CPU utilization to 70\u201380% and improves response time to 150\u2013200ms.  \n  - **Trade-off**: Increased cost vs. improved performance.  \n- **Rightsize Compute**:  \n  - **Cost**: Lower (e.g., $0.08\u2013$0.09) but may not address high CPU usage.  \n  - **Trade-off**: Lower cost vs. potential performance gaps.  \n- **Scale Down**:  \n  - **Cost**: Lower (e.g., $0.08\u2013$0.09) but may worsen performance.  \n  - **Trade-off**: Cost savings vs. degraded performance.  \n\n### 4. Recommendation  \n**Scale Up** to m5.2xlarge to address high CPU utilization and slow responses while maintaining cost efficiency. This balances performance and budget, as the current instance is already large but underutilized.  \n\n### 5. Monitoring Plan  \n- **Monitor CPU usage** and response time hourly.  \n- **Scale down** if load decreases below 80% (e.g., m5.xlarge).  \n- **Scale up** if CPU utilization exceeds 90% (e.g., m5.2xlarge).  \n- **Track costs** monthly to ensure no unnecessary scaling.  \n- **Enable autoscaling** for dynamic adjustments based on metrics.",
       "tool_trace": [
         {
           "tool": "get_resource_metrics",
@@ -370,14 +373,13 @@
         "scale_up"
       ],
       "current_state_summary": "High CPU / slow responses: instance=m5.large, cpu=92.0%, mem=68.0%, p95=520.0ms, cost=$0.096/hr, autoscaling=False (latency>SLA, availability<SLA)",
-      "trade_offs": "Grounded in tool evidence; simulation only; model may mis-rank soft trade-offs.",
-      "monitoring_plan": "Track p95 latency, CPU, and hourly cost for 24h after any change.",
+      "trade_offs": "Synthesizes multi-tool evidence into natural-language trade-offs and a monitoring plan; simulation only.",
+      "monitoring_plan": "Track p95 latency, CPU, memory telemetry health, and hourly cost for 24h.",
       "model": "qwen3:1.7b",
       "tools_called": [
         "get_resource_metrics",
         "get_cost_estimate"
       ],
-      "display_recommendation": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
       "target_instance": "c5.xlarge"
     }
   ],
@@ -386,37 +388,43 @@
       "agent": "Simple Reflex",
       "recommendation": "scale_up",
       "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
-      "reasoning": "Simple reflex: IF cpu>=85 OR p95>300 THEN scale_up. Observed cpu=92.0%, p95=520.0ms, cost=$0.096/hr, gap=8.0."
+      "reasoning": "Simple reflex: IF cpu>=85 OR p95>300 THEN scale_up. Observed cpu=92.0%, p95=520.0ms, cost=$0.096/hr, gap=8.0.",
+      "trade_offs": "Fast and deterministic, but ignores history, multi-objective scoring, and candidate instance catalog."
     },
     {
       "agent": "Model-Based Reflex",
       "recommendation": "scale_up",
       "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
-      "reasoning": "Model-based reflex used internal state: believed breach_streak=1, avg_cpu=92.0, avg_p95=520.0."
+      "reasoning": "Model-based reflex used internal state: believed breach_streak=1, avg_cpu=92.0, avg_p95=520.0.",
+      "trade_offs": "Handles missing sensors and transient spikes via internal state, but still no explicit goal search or utility ranking."
     },
     {
       "agent": "Goal-Based",
       "recommendation": "scale_up",
       "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
-      "reasoning": "Looked ahead over 5 actions; 1 pass the goal test. Took first passing plan (scale_up). Checks: scale_up:pass, enable_autoscaling:fail, rightsize_compute:fail, scale_down:fail, keep_current:fail."
+      "reasoning": "Looked ahead over 5 actions; 1 pass the goal test. Took first passing plan (scale_up). Checks: scale_up:pass, enable_autoscaling:fail, rightsize_compute:fail, scale_down:fail, keep_current:fail.",
+      "trade_offs": "All passing plans treated as equally good (no utility ranking)."
     },
     {
       "agent": "Utility-Based",
       "recommendation": "scale_up",
       "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
-      "reasoning": "Highest weighted utility (0.681) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_up=0.681]."
+      "reasoning": "Highest weighted utility (0.681) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_up=0.681].",
+      "trade_offs": "Sidebar weights change the ranking; SLO breaches reduce performance/availability scores."
     },
     {
       "agent": "Learning",
       "recommendation": "scale_up",
       "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
-      "reasoning": "Highest weighted utility (4.014) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_up=4.014]. Experience-adjusted success rates: scale_up=0.67."
+      "reasoning": "Highest weighted utility (4.014) using cost=0.40, performance=0.40, availability=0.20. Ranking: [scale_up=4.014]. Experience-adjusted success rates: scale_up=0.67.",
+      "trade_offs": "Improves with outcomes, but needs enough episodes and occasional exploration."
     },
     {
       "agent": "LLM (Ollama/LangChain)",
       "recommendation": "scale_up",
-      "display": "SCALE_UP - Upsize to c5.xlarge ($122/mo)",
-      "reasoning": "\n\nNormalized recommendation from tool evidence: scale_up."
+      "display": "Scale Up** to m5.2xlarge to address high CPU utilization and slow responses while maintaining cost efficiency. This bala",
+      "reasoning": "Called 2 tools: get_resource_metrics, get_cost_estimate.",
+      "trade_offs": "Synthesizes multi-tool evidence into natural-language trade-offs and a monitoring plan; simulation only."
     }
   ],
   "why_decisions_differ": "Agents differ because each uses a different decision mechanism (rules vs state vs goal test vs utility vs learned rates vs LLM+tools). scale_up: Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, Learning, LLM (Ollama/LangChain)",
